@@ -12,13 +12,12 @@ def tokenize(text):
 	return words
 
 def xmlify(listofstrings):
-	for i in range(len(listofstrings)):
-		listofstrings[i] = "<s> " + listofstrings[i] + " </s>"
+	listofstrings = ["<s> " + listofstrings[i] + " </s>" for i in range(len(listofstrings))]
 	return listofstrings
 
 #TODO: "Estimate roughly the accuracy of your program."
 
 # if __name__ == '__main__':
-text = open(sys.argv[1], 'r').read()
+text = open(sys.argv[1], 'r', encoding='utf-8').read()
 tokenized = tokenize(text)
 print(xmlify(tokenized))
