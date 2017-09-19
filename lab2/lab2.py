@@ -4,13 +4,9 @@ import sys
 import regex as re
 
 def tokenize(text):
-	# words = re.findall(’\p{L}+’, text)
 	words = re.findall('[A-Ö][\s\S]*?[\.!?]', text)
-	words = [words[i][:-1].replace('\n', '').replace('\xad', '').lower() for i in range(len(words))]
-	#words = [words[i][:-1].lower() for i in range(len(words))]
-
-		#words[i] = words[i][:-1].lower()
-		#print(type(word))
+	words = [words[i][:-1].replace('\n', '').replace('\xad', '').lower() 
+		for i in range(len(words))]
 	return words
 
 def xmlify(listofstrings):
@@ -23,3 +19,5 @@ def xmlify(listofstrings):
 text = open(sys.argv[1], 'r', encoding='utf-8').read()
 tokenized = tokenize(text)
 print(xmlify(tokenized))
+
+962203

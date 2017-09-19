@@ -1,0 +1,12 @@
+Counting unigrams and bigrams
+Read and try programs to compute the frequency of unigrams and bigrams of the training set: [Program folder].
+What is the possible number of bigrams and their real number? Explain why such a difference. What would be the possible number of 4-grams.
+Propose a solution to cope with bigrams unseen in the corpus. This topic will be discussed during the lab session.
+
+
+selma:
+words: 962204
+bigrams: 962203
+
+possible bigrams = 962204^2 = 925836537616
+possible 4-grams = 962204^4
