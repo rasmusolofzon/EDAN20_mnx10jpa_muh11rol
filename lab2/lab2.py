@@ -81,6 +81,7 @@ def sentence_prob(sentence, frequency_unigrams):
 text = open(sys.argv[1], 'r', encoding='utf-8').read()
 # tokenized = tokenize_sentences(text)
 
+
 # foo = 0
 # for sent in tokenized:
 #     foo += len(tokenize_words(sent))
@@ -114,8 +115,25 @@ for bigram in freq_bigrams:
 
 print(sentence_prob('<s> det var en gång en katt som hette nils <\s>', freq_unigrams))
 
-#print(freq_unigrams['detnils'])
+print("\nUnigram model")
+print("======================================")
+print("wi\tC(wi)\t#words\tP(wi)")
+print("======================================")
+print("stuff\nstuff\nstuff")
+print("======================================")
+print("Prob. unigrams: None")
+print("Geometric mean prob.: None")
+print("Entropy rate: None")
+print("Perplexity: None")
 
-
-
+print("\nBigram model")
+print("======================================")
+print("wi\twi+1\tCi,i+1\tC(i)\tP(wi+1|wi)")
+print("======================================")
+print("stuff\nstuff\nstuff")
+print("======================================")
+print("Prob. unigrams: None")
+print("Geometric mean prob.: None")
+print("Entropy rate: None")
+print("Perplexity: None")
 
