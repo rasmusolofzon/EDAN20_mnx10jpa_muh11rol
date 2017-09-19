@@ -55,7 +55,7 @@ def mutual_info(words, freq_unigrams, freq_bigrams):
 text = open(sys.argv[1], 'r', encoding='utf-8').read()
 tokenized = tokenize(text)
 
-print(xmlify(tokenized))
+#print(xmlify(tokenized))
 
 words = tokenize1(text)
 frequency_bigrams = count_bigrams(words)
@@ -75,10 +75,31 @@ print("possible nbr of 4-grams = " + str(math.pow(len(words), 4)))
 frequency = count_unigrams(words)
 mi = mutual_info(words, frequency, count_bigrams(words))
 
-for bigram in sorted(mi.keys(), key=mi.get, reverse=True):
+"""for bigram in sorted(mi.keys(), key=mi.get, reverse=True):
 	if frequency_bigrams[bigram] < 1: continue
 	print(mi[bigram], '\t', bigram, '\t',
 			frequency[bigram[0]], '\t',
 			frequency[bigram[1]], '\t',
-			frequency_bigrams[bigram])
+			frequency_bigrams[bigram])"""
 
+print("\nUnigram model")
+print("======================================")
+print("wi\tC(wi)\t#words\tP(wi)")
+print("======================================")
+print("stuff\nstuff\nstuff")
+print("======================================")
+print("Prob. unigrams: None")
+print("Geometric mean prob.: None")
+print("Entropy rate: None")
+print("Perplexity: None")
+
+print("\nBigram model")
+print("======================================")
+print("wi\twi+1\tCi,i+1\tC(i)\tP(wi+1|wi)")
+print("======================================")
+print("stuff\nstuff\nstuff")
+print("======================================")
+print("Prob. unigrams: None")
+print("Geometric mean prob.: None")
+print("Entropy rate: None")
+print("Perplexity: None")
