@@ -1,0 +1,12 @@
+saker att kolla upp:
+  chunks/chunking
+  baseline föreslaget av CoNLL 2000-organisatörerna
+  scikit-learn, lite om hur det funkar
+  partial syntactic structures
+  repetera supervised machine learning-teori
+  CoNLL-formatet
+  lite glos-plugg på parts-of-speech, ex vad NN, DT, NNP etc står för
+  vad termen gold-standard innebär 
+  läs japanernas paper, och på Yamcha-mjukvarans hemsida
+  översiktligt om decision trees, perceptroner, support vector machines, (andra machine learning techniques)
+  (beam search, logistic regression)
