@@ -1,25 +1,5 @@
 # python tokenize_simple.py < Selma.txt  | sort | uniq | wc -w
 
-# frågor:
-# for word in tokenize_words(sentence) - bra?
-# P(<\s>) - räkna med?
-#TODO: 'Estimate roughly the accuracy of your program.' - ska se rimligt ut
-# Propose a solution to cope with bigrams unseen in the corpus. This topic will be discussed during the lab session.
-
-# 1. multiplicera med 1
-# 2. backoff (se slide)
-
-#Prob. unigrams:   4.4922846219128876e-27        P(w1)P(w2)P(w3)P(w4)P(w5...)
-#Geometric mean prob.: 0.0023187115559242404     n-root(P(w1)P(w2)P(w3)P(w4)P(w5...))    
-#Entropy rate:   8.752460922513437               2-log(n-root(P(w1)P(w2)P(w3)P(w4)P(w5...)))
-#Perplexity:   431.2739967353978
-
-
-
-
-
-
-
 import sys
 import regex as re
 import math
@@ -176,16 +156,13 @@ if __name__ == '__main__':
             words.append(word)
     freq_unigrams = count_unigrams(words)
     freq_bigrams = count_bigrams(words)
-    mi = mutual_info(words, freq_unigrams, count_bigrams(words))
-
-    # for bigram in sorted(mi.keys(), key=mi.get, reverse=True):
-    # 	if frequency_bigrams[bigram] < 1: continue
-    # 	print(mi[bigram], '\t', bigram, '\t',
-    # 			frequency_unigrams[bigram[0]], '\t',
-    # 			frequency_unigrams[bigram[1]], '\t',
-    # 			frequency_bigrams[bigram])
-
+    
     print_stats(words, freq_bigrams)
-    prob_unigrams('det var en gång en katt som hette nils', freq_unigrams)
-    prob_bigrams('<s> det var en gång en katt som hette nils </s>', freq_unigrams, freq_bigrams)
+    
+    test_set = [37, 548, 1065, 6735, 55829]
+    for i in range(len(test_set)):
+        prob_unigrams(tokenized[test_set[i]], freq_unigrams)
+        prob_bigrams(tokenized[test_set[i]], freq_unigrams, freq_bigrams)
+
+
    
