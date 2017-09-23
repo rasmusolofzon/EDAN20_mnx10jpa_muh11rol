@@ -1,5 +1,7 @@
 saker att kolla upp:
   chunks/chunking
+    "Chunking is also called shallow parsing and it's basically the identification of parts of speech and short phrases (like noun phrases)." SO
+    "Text chunking consists of dividing a text in syntactically correlated parts of words." CoNLL-länken vi fick av Pierre
   baseline föreslaget av CoNLL 2000-organisatörerna
   scikit-learn, lite om hur det funkar
   partial syntactic structures
@@ -9,4 +11,6 @@ saker att kolla upp:
   vad termen gold-standard innebär 
   läs japanernas paper, och på Yamcha-mjukvarans hemsida
   översiktligt om decision trees, perceptroner, support vector machines, (andra machine learning techniques)
+    perceptron
+      "In machine learning, the perceptron is an algorithm for supervised learning of binary classifiers (functions that can decide whether an input, represented by a vector of numbers, belongs to some specific class or not)." - wiki
   (beam search, logistic regression)
