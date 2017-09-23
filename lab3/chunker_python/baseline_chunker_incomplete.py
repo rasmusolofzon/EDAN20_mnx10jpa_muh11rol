@@ -1,3 +1,7 @@
+# varför punkter och komman i listan?
+# varför fel på första prediktionen?
+
+
 import conll_reader
 
 # Computes the part-of-speech distribution in a CoNLL 2000 file
@@ -39,8 +43,7 @@ def train(corpus):
 
 
 def predict(model, corpus):
-	Predicts the chunk from the part of speech 
-	Add a predicted chunk column: pchunk
+	# Predicts the chunk from the part of speech 
 	for sentence in corpus:
 		for row in sentence:
 			row['pchunk'] = model[row['pos']]
