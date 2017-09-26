@@ -1,0 +1,15 @@
+svar:
+-----
+1. feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2', pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
+
+2. 0.95, i.e. classifies 95% of the chunks correct - fel - ej accuracy utan f1
+
+3. 0.92 - fel
+
+4. Logistic Regression
+
+
+frågor
+------
+hur bestämma chunk om tvetydig?
+förklara fit + fit_transform
