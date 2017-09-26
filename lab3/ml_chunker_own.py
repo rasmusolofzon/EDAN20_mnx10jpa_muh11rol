@@ -54,7 +54,7 @@ def extract_features_sent(sentence, w_size, feature_names):
     for line in sentence:
         line = line.split()
         padded_sentence.append(line)
-    print(padded_sentence)
+    # print(padded_sentence)
 
     # We extract the features and the classes
     # X contains is a list of features, where each feature vector is a dictionary
@@ -70,11 +70,11 @@ def extract_features_sent(sentence, w_size, feature_names):
         # The POS
         for j in range(2 * w_size + 1):
             x.append(padded_sentence[i + j][1])
+        
         # The chunks (Up to the word)
-        """
-        for j in range(w_size):
-            feature_line.append(padded_sentence[i + j][2])
-        """
+        '''for j in range(w_size):
+            feature_line.append(padded_sentence[i + j][2])'''
+        
         # We represent the feature vector as a dictionary
         X.append(dict(zip(feature_names, x)))  # {'w_i-2': 'The', 'w_i-1': 'cat', 'w_i': 'ate', ... 't_i'}
         # The classes are stored in a list
@@ -145,17 +145,19 @@ if __name__ == '__main__':
     train_corpus = './train.txt'
     test_corpus = './test.txt'
     w_size = 2  # The size of the context window to the left and right of the word
-    feature_names = [''''word_n2', 'word_n1', 'word', 'word_p1', 'word_p2','''
-                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
+    feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2',
+                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2'] #,
+                     #'chunk_n2', 'chunk_n1'"""]
 
     train_sentences = conll_reader.read_sentences(train_corpus)
 
     print("Extracting the features...")
     X_dict, y_symbols = extract_features(train_sentences, w_size, feature_names)
-
+    
     print("Encoding the features and classes...")
     # Vectorize the feature matrix and carry out a one-hot encoding
     vec = DictVectorizer(sparse=True)
+    # print(X_dict[55])
     X = vec.fit_transform(X_dict)
     # The statement below will swallow a considerable memory
     # X = vec.fit_transform(X_dict).toarray()
@@ -165,10 +167,11 @@ if __name__ == '__main__':
 
     training_start_time = time.clock()
     print("Training the model...")
-    classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+    # classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
     # classifier = tree.DecisionTreeClassifier()
+    classifier = linear_model.Perceptron(penalty='l2', n_jobs=2)
     model = classifier.fit(X, y)
-    print(model)
+    # print(model)
 
     test_start_time = time.clock()
     # We apply the model to the test set

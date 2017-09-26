@@ -7,6 +7,65 @@ svar:
 3. 0.92 - fel
 
 4. Logistic Regression
+        Decision trees: Global f1 score of 0.95
+                Classification report for classifier DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+                    max_features=None, max_leaf_nodes=None,
+                    min_impurity_decrease=0.0, min_impurity_split=None,
+                    min_samples_leaf=1, min_samples_split=2,
+                    min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+                    splitter='best'):
+                    precision    recall  f1-score   support
+
+                0       0.74      0.68      0.71       440
+                1       0.80      0.78      0.79       866
+                2       0.50      0.67      0.57         9
+                3       1.00      0.50      0.67         2
+                4       0.00      0.00      0.00         5
+                5       0.95      0.96      0.96     12422
+                6       0.96      0.97      0.97      4811
+                7       0.69      0.75      0.71       106
+                8       0.85      0.82      0.83       535
+                10       0.94      0.95      0.95      4658
+                11       0.77      0.60      0.68       167
+                12       0.59      0.57      0.58        89
+                13       0.50      0.54      0.52        13
+                15       0.96      0.96      0.96     14376
+                16       0.69      0.71      0.70        48
+                18       0.20      0.75      0.32         4
+                20       0.94      0.94      0.94      2646
+                21       0.96      0.96      0.96      6180
+
+        avg / total       0.95      0.95      0.95     47377
+
+    Perceptrons: Global f1 score of 0.90
+                Classification report for classifier Perceptron(alpha=0.0001, class_weight=None, eta0=1.0, fit_intercept=True,
+            max_iter=5, n_iter=None, n_jobs=2, penalty='l2', random_state=0,
+            shuffle=True, tol=None, verbose=0, warm_start=False):
+                    precision    recall  f1-score   support
+
+                0       0.58      0.37      0.45       440
+                1       0.73      0.52      0.61       866
+                2       0.00      0.00      0.00         9
+                3       0.00      0.00      0.00         2
+                4       0.00      0.00      0.00         5
+                5       0.92      0.91      0.91     12422
+                6       0.94      0.90      0.92      4811
+                7       0.50      0.54      0.52       106
+                8       0.69      0.76      0.72       535
+                9       0.00      0.00      0.00         0
+                10       0.91      0.92      0.92      4658
+                11       0.00      0.00      0.00       167
+                12       0.46      0.15      0.22        89
+                13       0.44      0.31      0.36        13
+                15       0.93      0.89      0.91     14376
+                16       0.53      0.17      0.25        48
+                17       0.00      0.00      0.00         0
+                18       0.01      0.25      0.02         4
+                20       0.89      0.88      0.88      2646
+                21       0.94      0.91      0.93      6180
+
+        avg / total       0.91      0.88      0.90     47377
+
 
 
 frågor
