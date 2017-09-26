@@ -164,5 +164,4 @@ if __name__ == '__main__':
         prob_unigrams(tokenized[test_set[i]], freq_unigrams)
         prob_bigrams(tokenized[test_set[i]], freq_unigrams, freq_bigrams)
 
-
    
