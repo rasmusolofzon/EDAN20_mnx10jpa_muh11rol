@@ -131,7 +131,7 @@ def prob_bigrams(sentence, frequency_unigrams, frequency_bigrams):
         
         sentence_prob *= bigram_prob
         print(bigram[0] + ' ' + bigram[1] + ' ' + str(bigram_freq) + ' ' + str(prev_unigram_freq) + ' ' 
-             + (' *backoff' if backoff else '' ) + str(bigram_prob)) 
+            + str(bigram_prob) + (' *backoff' if backoff else '' )) 
 
     n = len(words)
     prob_mean = math.pow(sentence_prob, 1/n)
@@ -164,5 +164,6 @@ if __name__ == '__main__':
         prob_unigrams(tokenized[test_set[i]], freq_unigrams)
         prob_bigrams(tokenized[test_set[i]], freq_unigrams, freq_bigrams)
 
+    prob_bigrams('Det var en gång en katt som hette nils', freq_unigrams, freq_bigrams)
 
    

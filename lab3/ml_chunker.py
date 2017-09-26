@@ -119,7 +119,7 @@ def encode_classes(y_symbols):
     """
 
     # We convert y_symbols into a numerical vector
-    y = [inv_dict_classes[i] for i in y_symbols]
+    y = [inv_dict_classes[y_symbol] for y_symbol in y_symbols]
     return y, dict_classes, inv_dict_classes
 
 

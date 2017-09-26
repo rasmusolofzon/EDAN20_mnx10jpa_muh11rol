@@ -62,7 +62,7 @@ def eval(predicted):
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
+
     column_names = ['form', 'pos', 'chunk']
     train_file = '../train.txt'
     test_file = '../test.txt'
@@ -86,7 +86,7 @@ if __name__ == '__main__':
                         row['chunk'] + ' ' + row['pchunk'] + '\n')
         f_out.write('\n')
     f_out.close()
-=======
+
 	column_names = ['form', 'pos', 'chunk']
 	train_file = '../train.txt'
 	test_file = '../test.txt'
@@ -112,4 +112,4 @@ if __name__ == '__main__':
 						row['chunk'] + ' ' + row['pchunk'] + '\n')
 		f_out.write('\n')
 	f_out.close()
->>>>>>> cb141042bf8e4450044d11d6ba7e4ae69ee62ad4
+
