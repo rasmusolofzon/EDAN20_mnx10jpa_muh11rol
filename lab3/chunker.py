@@ -166,3 +166,14 @@ if __name__ == '__main__':
                         row['chunk'] + ' ' + row['pchunk'] + '\n')
         f_out.write('\n')
     f_out.close()
+
+"""
+bygg modell > träna modellen med train-setet > förutsäg med modellen på test-setet
+
+a b c d e 
+
+a b c d E
+a b c D e 
+a b C d e
+..
+"""
