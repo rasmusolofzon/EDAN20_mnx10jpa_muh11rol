@@ -41,8 +41,8 @@ def extract_features_sent(sentence, w_size, feature_names):
     """
 
     # We pad the sentence to extract the context window more easily
-    start = "BOS BOS BOS\n"
-    end = "\nEOS EOS EOS"
+    start = "BOS BOS BOS BOS\n"
+    end = "\nEOS EOS EOS EOS"
     start *= w_size
     end *= w_size
     sentence = start + sentence
@@ -72,8 +72,8 @@ def extract_features_sent(sentence, w_size, feature_names):
             x.append(padded_sentence[i + j][1])
         
         # The chunks (Up to the word)
-        '''for j in range(w_size):
-            feature_line.append(padded_sentence[i + j][2])'''
+        ''' for j in range(w_size):
+            feature_line.append(padded_sentence[i + j][2]) '''
         
         # We represent the feature vector as a dictionary
         X.append(dict(zip(feature_names, x)))  # {'w_i-2': 'The', 'w_i-1': 'cat', 'w_i': 'ate', ... 't_i'}
@@ -122,7 +122,7 @@ def encode_classes(y_symbols):
     return y, dict_classes, inv_dict_classes
 
 
-def predict(test_sentences, feature_names, f_out):
+def predict(test_sentences, feature_names, f_out, classifier):
     for test_sentence in test_sentences:
         X_test_dict, y_test_symbols = extract_features_sent(test_sentence, w_size, feature_names)
         # Vectorize the test sentence and one hot encoding
@@ -130,7 +130,7 @@ def predict(test_sentences, feature_names, f_out):
         # Predicts the chunks and returns numbers
         y_test_predicted = classifier.predict(X_test)
         # Converts to chunk names
-        y_test_predicted_symbols = list(dict_classes[i] for i in y_test_predicted)
+        y_test_predicted_symbols = [dict_classes[i] for i in y_test_predicted]
         # Appends the predicted chunks as a last column and saves the rows
         rows = test_sentence.splitlines()
         rows = [rows[i] + ' ' + y_test_predicted_symbols[i] for i in range(len(rows))]
@@ -146,8 +146,8 @@ if __name__ == '__main__':
     test_corpus = './test.txt'
     w_size = 2  # The size of the context window to the left and right of the word
     feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2',
-                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2'] #,
-                     #'chunk_n2', 'chunk_n1'"""]
+                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']#,
+                    #  'chunk_n2', 'chunk_n1']
 
     train_sentences = conll_reader.read_sentences(train_corpus)
 
@@ -167,9 +167,9 @@ if __name__ == '__main__':
 
     training_start_time = time.clock()
     print("Training the model...")
-    # classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+    classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
     # classifier = tree.DecisionTreeClassifier()
-    classifier = linear_model.Perceptron(penalty='l2', n_jobs=2)
+    # classifier = linear_model.Perceptron(penalty='l2', n_jobs=2)
     model = classifier.fit(X, y)
     # print(model)
 
@@ -194,7 +194,7 @@ if __name__ == '__main__':
     # corpus structure
     print("Predicting the test set...")
     f_out = open('out', 'w')
-    predict(test_sentences, feature_names, f_out)
+    predict(test_sentences, feature_names, f_out, classifier)
 
     end_time = time.clock()
     print("Training time:", (test_start_time - training_start_time) / 60)
