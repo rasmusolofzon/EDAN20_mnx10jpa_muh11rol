@@ -47,6 +47,36 @@ if __name__ == '__main__':
     print(sorted_pairs[len(sorted_pairs)-4])
     print(sorted_pairs[len(sorted_pairs)-5])
 
+    sov_triplets = {}
+
+    for sentence in formatted_corpus:
+        for word in sentence:
+            if word['deprel'] == 'SS':
+                for other_word in sentence:
+                    #if head['id'] == word['head']:
+                        
+                    if other_word['head'] == word['head'] and other_word['deprel'] == 'OO': 
+                        for head in sentence:
+                            if head['id'] == word['head'] and head['id'] == other_word['head']:
+                                if (word['form'].lower(), other_word['form'].lower(), head['form'].lower()) in sov_triplets.keys():
+                                    sov_triplets[(word['form'].lower(), other_word['form'].lower(), head['form'].lower())] += 1
+                                else:
+                                    sov_triplets[(word['form'].lower(), other_word['form'].lower(), head['form'].lower())] = 1
+
+    summa = 0
+    for freq in sov_triplets.values():
+        summa += freq
+
+    print(summa)
+
+    sorted_triplets = sorted(sov_triplets.items(), key=lambda triplet: triplet[1])
+    print(sorted_triplets[len(sorted_triplets)-1])
+    print(sorted_triplets[len(sorted_triplets)-2])
+    print(sorted_triplets[len(sorted_triplets)-3])
+    print(sorted_triplets[len(sorted_triplets)-4])
+    print(sorted_triplets[len(sorted_triplets)-5])
+
+    
 
     '''
     [ #formaterat corpus
