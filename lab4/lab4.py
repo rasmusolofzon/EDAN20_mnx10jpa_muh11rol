@@ -1,6 +1,7 @@
 ''' 
     note: (CoNLL-X == CoNLL2006) = True
     format desc: https://web.archive.org/web/20161105025307/http://ilk.uvt.nl/conll/
+    functional categories (sv): http://stp.lingfil.uu.se/~nivre/swedish_treebank/GF.html
 '''
 
 import conll
@@ -21,7 +22,7 @@ if __name__ == '__main__':
 
     for sentence in formatted_corpus:
         for word in sentence:
-            if '' inword.keys():
+            if 'kanin' in word.keys():
 
     
 
