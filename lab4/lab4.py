@@ -17,7 +17,7 @@ if __name__ == '__main__':
     sentences = conll.read_sentences(train_file)
     formatted_corpus = conll.split_rows(sentences, column_names_2006)
     print(train_file, len(formatted_corpus))
-    print(formatted_corpus[0])
+    #print(formatted_corpus[0])
     #print(formatted_corpus[1])
 
     subj_verb_pairs = {}
@@ -27,10 +27,10 @@ if __name__ == '__main__':
             if word['deprel'] == 'SS':
                 for head in sentence:
                     if head['id'] == word['head']:
-                        if (word['form'], head['form']) in subj_verb_pairs.keys():
-                            subj_verb_pairs[(word['form'], head['form'])] += 1
+                        if (word['form'].lower(), head['form'].lower()) in subj_verb_pairs.keys():
+                            subj_verb_pairs[(word['form'].lower(), head['form'].lower())] += 1
                         else:
-                            subj_verb_pairs[(word['form'], head['form'])] = 1
+                            subj_verb_pairs[(word['form'].lower(), head['form'].lower())] = 1
 
     print("unique pairs " + str(len(subj_verb_pairs)))
 
@@ -39,6 +39,13 @@ if __name__ == '__main__':
         summa += freq
     
     print("Total nbr of frequencies " + str(summa) + ", whoopdeefuckingdoo")
+
+    sorted_pairs = sorted(subj_verb_pairs.items(), key=lambda pair: pair[1])
+    print(sorted_pairs[len(sorted_pairs)-1])
+    print(sorted_pairs[len(sorted_pairs)-2])
+    print(sorted_pairs[len(sorted_pairs)-3])
+    print(sorted_pairs[len(sorted_pairs)-4])
+    print(sorted_pairs[len(sorted_pairs)-5])
 
 
     '''
