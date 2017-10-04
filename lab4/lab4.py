@@ -18,13 +18,27 @@ if __name__ == '__main__':
     formatted_corpus = conll.split_rows(sentences, column_names_2006)
     print(train_file, len(formatted_corpus))
     print(formatted_corpus[0])
-    print(formatted_corpus[1])
+    #print(formatted_corpus[1])
+
+    subj_verb_pairs = {}
 
     for sentence in formatted_corpus:
         for word in sentence:
-            if 'kanin' in word.keys():
+            if word['deprel'] == 'SS':
+                for head in sentence:
+                    if head['id'] == word['head']:
+                        if (word['form'], head['form']) in subj_verb_pairs.keys():
+                            subj_verb_pairs[(word['form'], head['form'])] += 1
+                        else:
+                            subj_verb_pairs[(word['form'], head['form'])] = 1
 
+    print("unique pairs " + str(len(subj_verb_pairs)))
+
+    summa = 0
+    for freq in subj_verb_pairs.values():
+        summa += freq
     
+    print("Total nbr of frequencies " + str(summa) + ", whoopdeefuckingdoo")
 
 
     '''
