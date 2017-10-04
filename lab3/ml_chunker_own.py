@@ -57,7 +57,7 @@ def extract_features_sent(sentence, w_size, feature_names):
     # print(padded_sentence)
 
     # We extract the features and the classes
-    # X contains is a list of features, where each feature vector is a dictionary
+    # X contains a list of features, where each feature vector is a dictionary
     # y is the list of classes
     X = list()
     y = list()
@@ -72,8 +72,8 @@ def extract_features_sent(sentence, w_size, feature_names):
             x.append(padded_sentence[i + j][1])
         
         # The chunks (Up to the word)
-        ''' for j in range(w_size):
-            feature_line.append(padded_sentence[i + j][2]) '''
+        for j in range(w_size):
+            x.append(padded_sentence[i + j][3])
         
         # We represent the feature vector as a dictionary
         X.append(dict(zip(feature_names, x)))  # {'w_i-2': 'The', 'w_i-1': 'cat', 'w_i': 'ate', ... 't_i'}
@@ -146,8 +146,8 @@ if __name__ == '__main__':
     test_corpus = './test.txt'
     w_size = 2  # The size of the context window to the left and right of the word
     feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2',
-                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']#,
-                    #  'chunk_n2', 'chunk_n1']
+                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2',
+                     'chunk_n2', 'chunk_n1']
 
     train_sentences = conll_reader.read_sentences(train_corpus)
 
