@@ -21,9 +21,6 @@ def get_sv_pairs(formatted_corpus):
                             subj_verb_pairs[(word['form'].lower(), head['form'].lower())] = 1
     return subj_verb_pairs
 
-
-
-
 def get_sov_triples(formatted_corpus):
 
     sov_triplets = {}
@@ -40,7 +37,6 @@ def get_sov_triples(formatted_corpus):
                                 else:
                                     sov_triplets[(word['form'].lower(), other_word['form'].lower(), head['form'].lower())] = 1
     return sov_triplets
-
 
 if __name__ == '__main__':
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
@@ -66,13 +62,18 @@ if __name__ == '__main__':
     sov_triple_freq = 0
     for freq in sov_triplets.values():
         sov_triple_freq += freq
-    print("\nTotal nbr of subject–verb–object triples: " + str(sov_triple_freq))
+    print("Total nbr of subject–verb–object triples: " + str(sov_triple_freq))
     print("\nThe top 5 most common subject–verb-object triples are: ")
     sorted_triplets = sorted(sov_triplets.items(), key=lambda triplet: triplet[1])
     for i in range(1,6):
         print(sorted_triplets[len(sorted_triplets)-i])
 
-
+    column_names_u = ['id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc']
+    train_file = 'datasets/da-ud-train.conllu'
+    sentences = conll.read_sentences(train_file)
+    formatted_corpus = conll.split_rows(sentences, column_names_u)
+    for word in formatted_corpus[0]: 
+        print(word)
 
 
 
