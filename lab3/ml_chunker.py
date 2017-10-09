@@ -1,3 +1,5 @@
+# X = vec.fit_transform(X_dict) ("Learn a list of feature name -> indices mappings") - varför använder vi X_dict istället för dict_classes
+
 """
 Machine learning chunker for CoNLL 2000
 """
@@ -180,7 +182,7 @@ if __name__ == '__main__':
     X_test_dict, y_test_symbols = extract_features(test_sentences, w_size, feature_names)
     # Vectorize the test set and one-hot encoding
     X_test = vec.transform(X_test_dict)  # Possible to add: .toarray()
-    y_test = [inv_dict_classes[i] if i in y_symbols else 0 for i in y_test_symbols]
+    y_test = [inv_dict_classes[element] if element in y_symbols else 0 for element in y_test_symbols]
     y_test_predicted = classifier.predict(X_test)
     print("Classification report for classifier %s:\n%s\n"
           % (classifier, metrics.classification_report(y_test, y_test_predicted)))
