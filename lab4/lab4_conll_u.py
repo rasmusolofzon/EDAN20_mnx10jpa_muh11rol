@@ -57,23 +57,16 @@ def reformate_corpus(formatted_corpus):
 
 if __name__ == '__main__':
     column_names_u = ['id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc']
+    language = sys.argv[1]
     print(language)
     train_file = 'datasets/' + language + '-ud-train.conllu'
-    #train_file_sv = 'datasets/sv-ud-train.conllu'
-    #train_file_es = 'datasets/es-ud-train.conllu'
-    #train_file_de = 'datasets/de-ud-train.conllu'
-    sentences = conll.read_sentences(train_file)
-    print(sentences)
+
 
     formatted_corpus = conll.split_rows(conll.read_sentences(train_file), column_names_u)
-    #reformatted_corpus = reformate_corpus(formatted_corpus)
-    
-    #formatted_corpus_sv = conll.split_rows(conll.read_sentences(train_file_sv), column_names_u)
-    #formatted_corpus_es = conll.split_rows(conll.read_sentences(train_file_sv), column_names_u)
-    #formatted_corpus_de = conll.split_rows(conll.read_sentences(train_file_sv), column_names_u)
-    #reformatted_corpus_sv = conll.split_rows(conll.read_sentences(train_file_sv), column_names_u)
-    #reformatted_corpus_es = conll.split_rows(conll.read_sentences(train_file_sv), column_names_u)
-    #reformatted_corpus_de = conll.split_rows(conll.read_sentences(train_file_sv), column_names_u)
+
+
+    reformatted_corpus = reformate_corpus(formatted_corpus)
+    print(formatted_corpus)
 
 
     subj_verb_pairs = get_sv_pairs(formatted_corpus)
