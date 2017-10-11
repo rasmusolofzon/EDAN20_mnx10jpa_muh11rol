@@ -43,7 +43,6 @@ def reference(stack, queue, graph):
     stack, queue, graph = transition.shift(stack, queue, graph)
     return stack, queue, graph, 'sh'
 
-
 if __name__ == '__main__':
     train_file = 'datasets/swedish_talbanken05_train.conll'
     test_file = 'datasets/swedish_talbanken05_test_blind.conll'
