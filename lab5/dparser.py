@@ -45,8 +45,8 @@ def reference(stack, queue, graph):
 
 
 if __name__ == '__main__':
-    train_file = '../../../corpus/conllx/sv/swedish_talbanken05_train.conll'
-    test_file = '../../../corpus/conllx/sv/swedish_talbanken05_test_blind.conll'
+    train_file = 'datasets/swedish_talbanken05_train.conll'
+    test_file = 'datasets/swedish_talbanken05_test_blind.conll'
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
     column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
 
