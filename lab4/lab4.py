@@ -68,16 +68,6 @@ if __name__ == '__main__':
     for i in range(1,6):
         print(sorted_triplets[len(sorted_triplets)-i])
 
-    column_names_u = ['id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc']
-    train_file = 'datasets/da-ud-train.conllu'
-    sentences = conll.read_sentences(train_file)
-    formatted_corpus = conll.split_rows(sentences, column_names_u)
-    for word in formatted_corpus[0]: 
-        print(word)
-
-
-
-
     '''
     [ #formaterat corpus
         [ #mening
