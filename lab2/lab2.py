@@ -5,7 +5,7 @@ import regex as re
 import math
 
 def tokenize_sentences(text):
-	words = re.findall('[A-Ö][\s\S]*?[\.!?]', text)
+	words = re.findall('[\p{Lu}][\s\S]*?[\.!?]', text)
 	words = [words[i][:-1].replace('\n', '').replace('\xad', '').lower() 
 		for i in range(len(words))]
 	return words
