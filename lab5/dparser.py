@@ -70,6 +70,7 @@ if __name__ == '__main__':
         graph['deprels']['0'] = 'ROOT'
         transitions = []
         while queue:
+            
             stack, queue, graph, trans = reference(stack, queue, graph)
             transitions.append(trans)
         stack, graph = transition.empty_stack(stack, graph)
