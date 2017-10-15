@@ -19,8 +19,7 @@ Extracting features
 		w_2first, POS_2first)
 3. (2, featX, featY)
 	where 
-		featX = (TOP-1)(POS+form)
-			(sentence ordering)
+		featX = (TOP-1(sentence ordering))(POS+form)
 		featY = ?
 all: Boolean parameters,
 	la = "can do left arc"
@@ -31,7 +30,6 @@ iteration
 1		6
 2		10
 3		14
-		(correct)
 
 "This means that the purpose of this assignment 
 	is to generate three scikit-learn models 
