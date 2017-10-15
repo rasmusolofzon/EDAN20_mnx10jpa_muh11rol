@@ -53,10 +53,14 @@ if __name__ == '__main__':
     formatted_corpus = conll.split_rows(sentences, column_names_2006)
 
     sent_cnt = 0
+
+    nonprojectives = []
+
     for sentence in formatted_corpus:
+        
         sent_cnt += 1
-        if sent_cnt % 1000 == 0:
-            print(sent_cnt, 'sentences on', len(formatted_corpus), flush=True)
+        #if sent_cnt % 1000 == 0:
+        #    print(sent_cnt, 'sentences on', len(formatted_corpus), flush=True)
         stack = []
         queue = list(sentence)
         graph = {}
@@ -71,8 +75,22 @@ if __name__ == '__main__':
         stack, graph = transition.empty_stack(stack, graph)
         print('Equal graphs:', transition.equal_graphs(sentence, graph))
 
+        # Create a list of non-projective sentences
+        if not transition.equal_graphs(sentence, graph):
+            nonprojectives.append(sentence)
+
         # Poorman's projectivization to have well-formed graphs.
         for word in sentence:
             word['head'] = graph['heads'][word['id']]
-        print(transitions)
-        print(graph)
+        #print(transitions)
+        #print(graph)
+            
+    # Obtain the shortest non-projective sentence
+    shortest = min(nonprojectives, key=len)
+    nonprojective = ''
+    for word in shortest:
+        if word['form'] != 'ROOT':
+            nonprojective += word['form'] + ' '
+    print(nonprojective)        
+    
+
