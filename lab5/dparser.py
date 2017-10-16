@@ -51,16 +51,37 @@ def reference(stack, queue, graph):
     stack, queue, graph = transition.shift(stack, queue, graph)
     return stack, queue, graph, 'sh'
 
+
+def encode_classes(y_symbols):
+    """
+    Encode the classes as numbers
+    :param y_symbols:
+    :return: the y vector and the lookup dictionaries
+    """
+    # We extract the chunk names
+    classes = sorted(list(set(y_symbols)))
+
+    # We assign each name a number
+    dict_classes = dict(enumerate(classes))
+
+    # We build an inverted dictionary
+    inv_dict_classes = {v: k for k, v in dict_classes.items()}
+
+    # We convert y_symbols into a numerical vector
+    y = [inv_dict_classes[y_symbol] for y_symbol in y_symbols]
+    return y, dict_classes, inv_dict_classes
+
+
+
 if __name__ == '__main__':
     train_file = 'datasets/swedish_talbanken05_train.conll'
     test_file = 'datasets/swedish_talbanken05_test_blind.conll'
     column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
     column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
 
-    feature_names_1 = ['w_1_STACK', 'pos_1_STACK', 'w_1_QUEUE', 'pos_1_QUEUE', 'can_left_arc', 'can_reduce']
-    feature_names_2 = feature_names_1 + ['w_2_STACK', 'pos_2_STACK','w_2_QUEUE', 'pos_2_QUEUE']
-    feature_names_3 = feature_names_2 + ['w_TOP_plus_1', 'pos_TOP_plus_1', 'pos_1_STACK_h', 'lex_1_STACK_rs']
-
+    feature_names_1 = ['stack0_FORM', 'stack0_POS', 'queue0_FORM', 'queue0_POS', 'can_leftarc', 'can_reduce']
+    feature_names_2 = feature_names_1 + ['stack1_FORM', 'stack1_POS', 'queue1_FORM', 'queue1_POS']
+    feature_names_3 = feature_names_2 + ['sent_stack0fw_FORM', 'sent_stack0fw_POS', 'sent_stack1h_POS', 'sent_stack1rs_FORM']
 
     sentences = conll.read_sentences(train_file)
     formatted_corpus = conll.split_rows(sentences, column_names_2006)
@@ -69,8 +90,11 @@ if __name__ == '__main__':
 
     nonprojectives = []
 
-    X_dict = [];
-    Y_symbols = [];
+    X_dict_1 = []
+    X_dict_2 = []
+    X_dict_3 = []
+
+    Y_symbols = []
 
     for sentence in formatted_corpus:
         #print(sentence)
@@ -88,8 +112,12 @@ if __name__ == '__main__':
 
         while queue:
             # Extract the features
+            feature_vector = features.extract(stack, queue, graph, feature_names_1, sentence)
+            X_dict_1.append(feature_vector)
+            feature_vector = features.extract(stack, queue, graph, feature_names_2, sentence)
+            X_dict_2.append(feature_vector)
             feature_vector = features.extract(stack, queue, graph, feature_names_3, sentence)
-            X_dict.append(feature_vector)
+            X_dict_3.append(feature_vector)
 
             # Obtain the next transition
             stack, queue, graph, trans = reference(stack, queue, graph)
@@ -129,26 +157,12 @@ if __name__ == '__main__':
     
     #print(X)
     #print(Y)
-    print('Nbr of feature vectors in X: ' + str(len(X_dict)))
+    print('Nbr of feature vectors in X3: ' + str(len(X_dict_3)))
     print('Nbr of gold standard values in Y: ' + str(len(Y_symbols)))
 
-
-
-
-
-    vec = DictVectorizer(sparse=True)
-    X = vec.fit_transform(X_dict)
-
     classes = ['la', 'ra', 'sh', 're']
-    
-    Y, dict_classes, inv_dict_classes = features.encode_classes(Y_symbols)
-
-    """
-    Y = []
-    for y_symbol in Y_symbols:
-        Y.append(classes.index(y_symbol))
-    """
-
-
-    #print(X)
-    #print(Y)
+    vec = DictVectorizer(sparse=True)
+    X_1 = vec.fit_transform(X_dict_1)
+    X_2 = vec.fit_transform(X_dict_2)
+    X_3 = vec.fit_transform(X_dict_3)
+    Y, dict_classes, inv_dict_classes = encode_classes(Y_symbols)

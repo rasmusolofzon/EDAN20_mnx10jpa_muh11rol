@@ -10,111 +10,99 @@ def extract(stack, queue, graph, feature_names, sentence):
     #print(feature_names)
     
     features = {}
-    
-    # the word and the part of speech extracted from the first element in the stack
+
+    # the word form and the part-of-speech extracted from the first element in the stack
     if len(stack) >= 1:
-        features['w_1_STACK'] = stack[0]['form']
-        features['pos_1_STACK'] = stack[0]['postag']
+        features['stack0_FORM'] = stack[0]['form']
+        features['stack0_POS'] = stack[0]['postag']
     else:
-        features['w_1_STACK'] = 'nil'
-        features['pos_1_STACK'] = 'nil'
-    # the word and the part of speech extracted from the first element in the queue
+        features['stack0_FORM'] = 'nil'
+        features['stack0_POS'] = 'nil'
+
+    # the word form and the part-of-speech extracted from the first element in the queue
     if len(queue) >= 1:
-        features['w_1_QUEUE'] = queue[0]['form']
-        features['pos_1_QUEUE'] = queue[0]['postag']
+        features['queue0_FORM'] = queue[0]['form']
+        features['queue0_POS'] = queue[0]['postag']
     else:
-        features['w_1_QUEUE'] = 'nil'
-        features['pos_1_QUEUE'] = 'nil'
-    # constraints on the parser's actions: "can do left arc" and "can do reduce"
-    features['can_left_arc'] = transition.can_leftarc(stack, graph)
+        features['queue0_FORM'] = 'nil'
+        features['queue0_POS'] = 'nil'
+
+    # constraints on the parser's actions: whether it can do 'left arc' and 'reduce'
+    features['can_leftarc'] = transition.can_leftarc(stack, graph)
     features['can_reduce'] = transition.can_reduce(stack, graph)
     
+
     # Only for the second feature set
     if len(feature_names) >= 10:
-        # the word and the part of speech extracted from the second element in the stack
+
+        # the word form and the part-of-speech extracted from the second element in the stack
         if len(stack) >= 2:
-            features['w_2_STACK'] = stack[1]['form']
-            features['pos_2_STACK'] = stack[1]['postag']
+            features['stack1_FORM'] = stack[1]['form']
+            features['stack1_POS'] = stack[1]['postag']
         else:
-            features['w_2_STACK'] = 'nil'
-            features['pos_2_STACK'] = 'nil'
-        # the word and the part of speech extracted from the second element in the queue
+            features['stack1_FORM'] = 'nil'
+            features['stack1_POS'] = 'nil'
+
+        # the word form and the part-of-speech extracted from the second element in the queue
         if len(queue) >= 2:
-            features['w_2_QUEUE'] = queue[1]['form']
-            features['pos_2_QUEUE'] = queue[1]['postag']
+            features['queue1_FORM'] = queue[1]['form']
+            features['queue1_POS'] = queue[1]['postag']
         else:
-            features['w_2_QUEUE'] = 'nil'
-            features['pos_2_QUEUE'] = 'nil'
+            features['queue1_FORM'] = 'nil'
+            features['queue1_POS'] = 'nil'
+
+        """
+        print([features['stack0_POS'], features['stack1_POS'], features['stack0_FORM'], features['stack1_FORM'],
+        features['queue0_POS'], features['queue1_POS'], features['queue0_FORM'], features['queue1_FORM'],
+        features['can_reduce'], features['can_leftarc']])
+        print('\n')
+        """
 
     # Only for the third feature set
     if len(feature_names) >= 14:
-        # the part of speech and the word form of the word following the top of the stack in the sentence order
+        
+        # the word form and the part-of-speech of the word following the top of the stack in the sentence order
         if len(stack) >= 1:
             for i in range(len(sentence)):
                 if sentence[i]['form'] == stack[0]['form']:
                     if len(sentence) >= i+2:
-                        features['w_TOP_plus_1'] = sentence[i+1]['form']
-                        features['pos_TOP_plus_1'] = sentence[i+1]['postag']
+                        features['sent_stack0fw_FORM'] = sentence[i+1]['form']
+                        features['sent_stack0fw_POS'] = sentence[i+1]['postag']
                     else: 
-                        features['w_TOP_plus_1'] = 'nil'
-                        features['pos_TOP_plus_1'] = 'nil'
+                        features['sent_stack0fw_FORM'] = 'nil'
+                        features['sent_stack0fw_POS'] = 'nil'
                     break
         else:
-            features['w_TOP_plus_1'] = 'nil'
-            features['pos_TOP_plus_1'] = 'nil'
+            features['sent_stack0fw_FORM'] = 'nil'
+            features['sent_stack0fw_POS'] = 'nil'
+        
         # the part-of-speech of the head of the second value on the stack
         if len(stack) >= 2:
             for i in range(len(sentence)):
                 if sentence[i]['id'] == stack[1]['head']:
-                    features['pos_1_STACK_h'] = sentence[i]['postag']
+                    features['sent_stack1h_POS'] = sentence[i]['postag']
                     break
         else: 
-            features['pos_1_STACK_h'] = 'nil'
+            features['sent_stack1h_POS'] = 'nil'
             
-        # the word (lexical value) of the right sibling of the second value on the stack 
+        # the word form of the right sibling of the second value on the stack 
         if len(stack) >= 2:
             for i in range(len(sentence)):
-                if sentence[i]['head'] == stack[1]['head'] and sentence[i]['form'] != stack[1]['form']:
-                    features['lex_1_STACK_rs'] = sentence[i]['form']
+                if sentence[i]['id'] > stack[1]['id'] and sentence[i]['head'] == stack[1]['head']:
+                    features['sent_stack1rs_FORM'] = sentence[i]['form']
                     break
                 else:
-                    features['lex_1_STACK_rs'] = 'nil'        
+                    features['sent_stack1rs_FORM'] = 'nil'        
         else: 
-            features['lex_1_STACK_rs'] = 'nil'
+            features['sent_stack1rs_FORM'] = 'nil'
         
 
         #print(features)
         #if len(features) < 14:
             #print(features)
 
-    """
-    print([features['pos_1_STACK'], features['pos_2_STACK'], features['w_1_STACK'], features['w_2_STACK'],
-            features['pos_1_QUEUE'], features['pos_2_QUEUE'], features['w_1_QUEUE'], features['w_2_QUEUE'],
-            features['can_reduce'], features['can_left_arc']])
-    print('\n')
-    """
-
     return features
 
-
-def encode_classes(y_symbols):
-    """
-    Encode the classes as numbers
-    :param y_symbols:
-    :return: the y vector and the lookup dictionaries
-    """
-    # We extract the chunk names
-    classes = sorted(list(set(y_symbols)))
-
-    # We assign each name a number
-    dict_classes = dict(enumerate(classes))
-
-    # We build an inverted dictionary
-    inv_dict_classes = {v: k for k, v in dict_classes.items()}
-
-    # We convert y_symbols into a numerical vector
-    y = [inv_dict_classes[y_symbol] for y_symbol in y_symbols]
-    return y, dict_classes, inv_dict_classes
 
 
 
@@ -122,48 +110,48 @@ if __name__ == '__main__':
     pass
 
 
-    #features_1 = ['w_1_STACK', 'pos_1_STACK', 'w_1_QUEUE', 'pos_1_QUEUE', 'can_left_arc', 'can_reduce']
-    #features_2 = features_1 + ['w_2_STACK', 'pos_2_STACK','w_2_QUEUE', 'pos_2_QUEUE']
-                
-    '''
-        ['w_1_STACK', 'pos_1_STACK', 'w_2_STACK', 'pos_2_STACK', 
-        'w_1_QUEUE', 'pos_1_QUEUE', 'w_2_QUEUE', 'pos_2_QUEUE',
-        'can_left_arc', 'can_reduce']
-    '''
+"""   
+# the word form and the part-of-speech extracted from the first element in the stack
+'stack0_FORM'
+'stack0_POS'
 
-    #features_3 = features_2 + ['w_TOP_plus_1', 'pos_TOP_plus_1', 'pos_1_STACK_h', 'lex_1_STACK_rs']
-                
-    '''
-        ['w_1_STACK', 'pos_1_STACK', 'w_2_STACK', 'pos_2_STACK', 
-        'w_1_QUEUE', 'pos_1_QUEUE', 'w_2_QUEUE', 'pos_2_QUEUE',
-        'can_left_arc', 'can_reduce', 
-        'w_', 'pos_', 
-        'pos_1_STACK_h', 'lex_1_STACK_rs']
-    '''
-     #POS STACK 1 h, LEX STACK 1 rs (good performance in http://www.aclweb.org/anthology/C/C10/C10-1093.pdf )
-                #word['head'] where sentence['id'] == id[TOP_form]+1
-                #POS STACK 1 h = the part-of-speech of the head of the second value on the stack
-                #LEX STACK 1 rs = the lexical value of the right sibling of the second value on the stack 
-                #http://maltparser.org/userguide.html
+# the word form and the part-of-speech extracted from the first element in the queue
+'queue0_FORM'
+'queue0_POS'
 
+# the word form and the part-of-speech extracted from the second element in the stack
+'stack1_FORM'
+'stack1_POS'
+
+# the word form and the part-of-speech extracted from the second element in the queue
+'queue1_FORM'
+'queue1_POS'
+
+# constraints on the parser's actions: whether it can do 'left arc' and 'reduce'
+'can_leftarc'
+'can_reduce'
+
+# the word form and the part-of-speech of the word following the top of the stack in the sentence order
+'sent_stack0fw_FORM'
+'sent_stack0fw_POS'
+
+# the part-of-speech of the head of the second value on the stack
+'sent_stack1h_POS'
+
+# the word form of the right sibling of the second value on the stack 
+'sent_stack1rs_FORM'
+"""
 
 
 """
-            if __name__ == '__main__':
+#POS STACK 1 h, LEX STACK 1 rs (good performance in http://www.aclweb.org/anthology/C/C10/C10-1093.pdf )
+#word['head'] where sentence['id'] == id[TOP_form]+1
+#POS STACK 1 h = the part-of-speech of the head of the second value on the stack
+#LEX STACK 1 rs = the lexical value of the right sibling of the second value on the stack 
+#http://maltparser.org/userguide.html
+"""
 
-
-                features = "poop"
-
-                X_l = []
-                for sentence in sentences:
-                    X, y = extract_features_sent(sentence, w_size, feature_names)
-                    X_l.extend(X)
-                    y_l.extend(y)
-                    return X_l, y_l
-                    """
-
-'''
-...
+"""
 for sentence in corpus:
     create empty stack
     put all words from sentence in queue
@@ -175,10 +163,8 @@ logisticRegClassifier
 logisticRegClassifier.fit(listWithAllFeatureVectors)
 
 yield success
-...
-'''
-#Generate the three scikit-learn models using the code models from the chunking labs. 
+"""
 
-
+# Generate the three scikit-learn models using the code models from the chunking labs. 
 # You will evaluate the model accuracies (not the parsing accuracy) using 
 # the classification report produced by scikit-learn and the correctly classified instances 
