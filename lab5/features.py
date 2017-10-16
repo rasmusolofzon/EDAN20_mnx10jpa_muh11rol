@@ -3,7 +3,7 @@
     (You have a code example of feature encoding in this format in the chunking program.)
 '''
 def extract(stack, queue, graph, feature_names, sentence):
-<<<<<<< HEAD
+
     features = "poop"
     
     X_l = []
@@ -13,10 +13,10 @@ def extract(stack, queue, graph, feature_names, sentence):
         y_l.extend(y)
     return X_l, y_l
 
-=======
+
     features = {}
     
->>>>>>> c069af187bc050885e7af79d88c9eaf61eadb900
+
     return features
 
 
