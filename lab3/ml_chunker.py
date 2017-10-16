@@ -57,7 +57,7 @@ def extract_features_sent(sentence, w_size, feature_names):
     for line in sentence:
         line = line.split()
         padded_sentence.append(line)
-    # print(padded_sentence)
+    # for line in padded_sentence: print(line)
 
     # We extract the features and the classes
     # X contains is a list of features, where each feature vector is a dictionary
@@ -70,14 +70,17 @@ def extract_features_sent(sentence, w_size, feature_names):
         # The words in lower case
         for j in range(2 * w_size + 1):
             x.append(padded_sentence[i + j][0].lower())
+        # print(x)
         # The POS
         for j in range(2 * w_size + 1):
             x.append(padded_sentence[i + j][1])
+        # print(x)
         # The chunks (Up to the word)
         """
         for j in range(w_size):
             feature_line.append(padded_sentence[i + j][2])
         """
+        # print(x)
         # We represent the feature vector as a dictionary
         X.append(dict(zip(feature_names, x)))
         # The classes are stored in a list
@@ -149,11 +152,13 @@ if __name__ == '__main__':
     test_corpus = 'test.txt'
     w_size = 2  # The size of the context window to the left and right of the word
     feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2',
-                     'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
+                    'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
 
     train_sentences = conll_reader.read_sentences(train_corpus)
-
+    # print(train_sentences[0] + train_sentences[1])
+    
     print("Extracting the features...")
+    short_train = [train_sentences[0],  train_sentences[1]]
     X_dict, y_symbols = extract_features(train_sentences, w_size, feature_names)
 
     print("Encoding the features and classes...")
@@ -170,9 +175,11 @@ if __name__ == '__main__':
 
     training_start_time = time.clock()
     print("Training the model...")
-    classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+    # classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+    # classifier = tree.DecisionTreeClassifier()
+    classifier = linear_model.Perceptron(penalty='l2', n_jobs=2)
     model = classifier.fit(X, y)
-    print(model)
+    # print(model)
 
     test_start_time = time.clock()
     # We apply the model to the test set

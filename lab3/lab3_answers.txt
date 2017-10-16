@@ -4,9 +4,42 @@ svar:
 
 2. global f1 = 0.95 
 
-3. 0.92 - fel
+3. Removed the words part of the feature_names vector, so that 
+        feature_names = ['pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
+
+        This yielded the results:
+
+        "
+                Classification report for classifier LogisticRegression(C=1.0, class_weight=None, dual=True, fit_intercept=True,
+                intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+                penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+                verbose=0, warm_start=False):
+                precision    recall  f1-score   support
+
+                0       0.81      0.45      0.58       440
+                1       0.82      0.68      0.74       866
+                2       0.83      0.56      0.67         9
+                3       0.00      0.00      0.00         2
+                4       0.00      0.00      0.00         5
+                5       0.93      0.94      0.93     12422
+                6       0.94      0.97      0.96      4811
+                7       0.77      0.74      0.75       106
+                8       0.88      0.72      0.79       535
+                10       0.93      0.88      0.90      4658
+                11       0.80      0.29      0.43       167
+                12       0.62      0.28      0.39        89
+                13       0.90      0.69      0.78        13
+                15       0.92      0.95      0.94     14376
+                16       0.87      0.56      0.68        48
+                18       0.08      0.25      0.12         4
+                20       0.89      0.90      0.90      2646
+                21       0.94      0.96      0.95      6180
+
+        avg / total       0.92      0.92      0.92     47377
+        "
 
 4. Logistic Regression
+        "
         Decision trees: Global f1 score of 0.95
                 Classification report for classifier DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
                     max_features=None, max_leaf_nodes=None,
@@ -36,8 +69,25 @@ svar:
                 21       0.96      0.96      0.96      6180
 
         avg / total       0.95      0.95      0.95     47377
-
-    Perceptrons: Global f1 score of 0.90
+        "
+        "
+        $ perl conlleval.txt < out
+        processed 47377 tokens with 23852 phrases; found: 24251 phrases; correct: 22010.
+        accuracy:  94.96%; precision:  90.76%; recall:  92.28%; FB1:  91.51 <----!!! this FB1 score
+                ADJP: precision:  74.22%; recall:  65.07%; FB1:  69.34  384
+                ADVP: precision:  78.45%; recall:  79.45%; FB1:  78.94  877
+                CONJP: precision:  44.44%; recall:  44.44%; FB1:  44.44  9
+                INTJ: precision: 100.00%; recall:  50.00%; FB1:  66.67  1
+                LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                NP: precision:  90.31%; recall:  92.34%; FB1:  91.31  12701
+                PP: precision:  95.87%; recall:  97.86%; FB1:  96.85  4911
+                PRT: precision:  77.23%; recall:  73.58%; FB1:  75.36  101
+                SBAR: precision:  89.15%; recall:  84.49%; FB1:  86.76  507
+                VP: precision:  90.84%; recall:  92.83%; FB1:  91.82  4760
+        "
+Perceptrons
+        "
+        Perceptrons: Global f1 score of 0.90
                 Classification report for classifier Perceptron(alpha=0.0001, class_weight=None, eta0=1.0, fit_intercept=True,
             max_iter=5, n_iter=None, n_jobs=2, penalty='l2', random_state=0,
             shuffle=True, tol=None, verbose=0, warm_start=False):
@@ -65,8 +115,127 @@ svar:
                 21       0.94      0.91      0.93      6180
 
         avg / total       0.91      0.88      0.90     47377
+        "
+
+        "
+        $ perl conlleval.txt < out
+        processed 47377 tokens with 23852 phrases; found: 26118 phrases; correct: 19719.
+        accuracy:  88.26%; precision:  75.50%; recall:  82.67%; FB1:  78.92
+                ADJP: precision:  43.32%; recall:  27.40%; FB1:  33.57  277
+                ADVP: precision:  67.14%; recall:  49.31%; FB1:  56.86  636
+                CONJP: precision:   0.00%; recall:   0.00%; FB1:   0.00  9
+                INTJ: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                NP: precision:  78.29%; recall:  83.16%; FB1:  80.65  13195
+                PP: precision:  93.58%; recall:  89.71%; FB1:  91.61  4612
+                PRT: precision:  28.36%; recall:  53.77%; FB1:  37.13  201
+                SBAR: precision:  60.71%; recall:  79.44%; FB1:  68.83  700
+                UCP: precision:   0.00%; recall:   0.00%; FB1:   0.00  1530
+                VP: precision:  81.57%; recall:  86.82%; FB1:  84.11  4958
+        "
+Decision trees
+        "
+                Classification report for classifier DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+                max_features=None, max_leaf_nodes=None,
+                min_impurity_decrease=0.0, min_impurity_split=None,
+                min_samples_leaf=1, min_samples_split=2,
+                min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+                splitter='best'):
+                precision    recall  f1-score   support
+
+                0       0.53      0.31      0.40       440
+                1       0.75      0.51      0.60       866
+                2       0.42      0.56      0.48         9
+                3       0.00      0.00      0.00         2
+                4       0.00      0.00      0.00         5
+                5       0.91      0.91      0.91     12422
+                6       0.95      0.95      0.95      4811
+                7       0.68      0.70      0.69       106
+                8       0.84      0.72      0.78       535
+                10       0.86      0.80      0.83      4658
+                11       0.41      0.23      0.29       167
+                12       0.43      0.24      0.30        89
+                13       0.60      0.69      0.64        13
+                15       0.89      0.94      0.92     14376
+                16       0.76      0.60      0.67        48
+                18       0.11      0.50      0.17         4
+                20       0.82      0.82      0.82      2646
+                21       0.94      0.95      0.95      6180
+
+        avg / total       0.89      0.89      0.89     47377
 
 
+        Predicting the test set...
+        Training time: 3.8353646166666664
+        Test time: 0.10366395000000021
+        "
+Eval of final solution:
+        run w/ perceptron:
+        "
+                Done!
+                Training time: 0.326105
+                Test time: 8.258858516666667
+        "
+        "
+        $ perl conlleval.txt < out_perceptron_1st
+        processed 55425 tokens with 23880 phrases; found: 32189 phrases; correct: 13809.
+        accuracy:  69.34%; precision:  42.90%; recall:  57.83%; FB1:  49.26 <-- 49.26<92.0, tyvärr...
+                        : precision:  94.74%; recall:  64.29%; FB1:  76.60  19
+                        : precision:  94.74%; recall:  64.29%; FB1:  76.60  19
+                ADJP: precision:  33.33%; recall:  12.79%; FB1:  18.48  168
+                ADVP: precision:  53.86%; recall:  50.81%; FB1:  52.29  817
+                CONJP: precision:   0.00%; recall:   0.00%; FB1:   0.00  2
+                INTJ: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                NP: precision:  37.68%; recall:  53.66%; FB1:  44.28  17689
+                PP: precision:  95.59%; recall:  74.79%; FB1:  83.92  3764
+                PRT: precision:   3.23%; recall:  23.58%; FB1:   5.68  775
+                SBAR: precision:  80.44%; recall:  54.58%; FB1:  65.03  363
+                UCP: precision:   0.00%; recall:   0.00%; FB1:   0.00  3346
+                VP: precision:  51.73%; recall:  58.27%; FB1:  54.81  5246
+        "
+        2nd run w/ perceptron:
+        "
+                Done!
+                Training time: 0.2985733666666667
+                Test time: 6.9105082
+        " (less printouts here, only each 25th sentence, above every sentence)
+        "
+        $ perl conlleval.txt < out_perceptron_2nd
+        processed 47377 tokens with 23852 phrases; found: 32170 phrases; correct: 13791.
+        accuracy:  64.13%; precision:  42.87%; recall:  57.82%; FB1:  49.23
+                ADJP: precision:  33.33%; recall:  12.79%; FB1:  18.48  168
+                ADVP: precision:  53.86%; recall:  50.81%; FB1:  52.29  817
+                CONJP: precision:   0.00%; recall:   0.00%; FB1:   0.00  2
+                INTJ: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                NP: precision:  37.68%; recall:  53.66%; FB1:  44.28  17689
+                PP: precision:  95.59%; recall:  74.79%; FB1:  83.92  3764
+                PRT: precision:   3.23%; recall:  23.58%; FB1:   5.68  775
+                SBAR: precision:  80.44%; recall:  54.58%; FB1:  65.03  363
+                UCP: precision:   0.00%; recall:   0.00%; FB1:   0.00  3346
+                VP: precision:  51.73%; recall:  58.27%; FB1:  54.81  5246
+        " still real shitty. compare 49.23 here to 78.92 for perceptrons in ml_chunker.py
+        logistic regression, 1st:
+        "
+                Done!
+                Training time: 1.2217946333333332
+                Test time: 0.27635203333333347
+        "
+        "
+        $ perl conlleval.txt < out_logreg_1st
+        processed 47377 tokens with 23852 phrases; found: 32180 phrases; correct: 15368.
+        accuracy:  66.59%; precision:  47.76%; recall:  64.43%; FB1:  54.85
+                ADJP: precision:  44.92%; recall:  38.36%; FB1:  41.38  374
+                ADVP: precision:  66.67%; recall:  66.97%; FB1:  66.82  870
+                CONJP: precision:   0.00%; recall:   0.00%; FB1:   0.00  5
+                INTJ: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                NP: precision:  35.79%; recall:  54.98%; FB1:  43.35  19083
+                PP: precision:  94.24%; recall:  95.57%; FB1:  94.90  4879
+                PRT: precision:  82.14%; recall:  43.40%; FB1:  56.79  56
+                SBAR: precision:  85.83%; recall:  78.13%; FB1:  81.80  487
+        " performs like absolute shit. Probably smth wrong in algo. Will have to re-check this w/ fresh eyes
 
 frågor
 ------
