@@ -4,7 +4,18 @@
 '''
 def extract(stack, queue, graph, feature_names, sentence):
     features = "poop"
+    
+    X_l = []
+    for sentence in sentences:
+        X, y = extract_features_sent(sentence, w_size, feature_names)
+        X_l.extend(X)
+        y_l.extend(y)
+    return X_l, y_l
+
     return features
+
+
+
 
 if __name__ == '__main__':
     features_1 = ['w_1_STACK', 'pos_1_STACK', 'w_1_QUEUE', 'pos_1_QUEUE', 
