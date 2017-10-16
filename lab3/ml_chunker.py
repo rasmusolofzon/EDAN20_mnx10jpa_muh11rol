@@ -166,6 +166,8 @@ if __name__ == '__main__':
 
     y, dict_classes, inv_dict_classes = encode_classes(y_symbols)
 
+    print(y)
+
     training_start_time = time.clock()
     print("Training the model...")
     classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
