@@ -70,14 +70,15 @@ if __name__ == '__main__':
         graph['deprels']['0'] = 'ROOT'
         transitions = []
         while queue:
+            
             stack, queue, graph, trans = reference(stack, queue, graph)
             transitions.append(trans)
         stack, graph = transition.empty_stack(stack, graph)
-        print('Equal graphs:', transition.equal_graphs(sentence, graph))
+        #print('Equal graphs:', transition.equal_graphs(sentence, graph))
 
         # Create a list of non-projective sentences
-        if not transition.equal_graphs(sentence, graph):
-            nonprojectives.append(sentence)
+        '''if not transition.equal_graphs(sentence, graph):
+            nonprojectives.append(sentence)'''
 
         # Poorman's projectivization to have well-formed graphs.
         for word in sentence:
@@ -86,11 +87,15 @@ if __name__ == '__main__':
         #print(graph)
             
     # Obtain the shortest non-projective sentence
-    shortest = min(nonprojectives, key=len)
+    '''shortest = min(nonprojectives, key=len)
     nonprojective = ''
     for word in shortest:
         if word['form'] != 'ROOT':
             nonprojective += word['form'] + ' '
-    print(nonprojective)        
+    print(nonprojective)'''
+
+    print(sentences[3])
+    for line in formatted_corpus[3]: print(line)
+    
     
 
