@@ -144,6 +144,10 @@ if __name__ == '__main__':
 
 
 """
+feature_names_1 = ['stack0_FORM', 'pos_1_STACK', 'w_1_QUEUE', 'pos_1_QUEUE', 'can_left_arc', 'can_reduce']
+feature_names_2 = feature_names_1 + ['w_2_STACK', 'pos_2_STACK','w_2_QUEUE', 'pos_2_QUEUE']
+feature_names_3 = feature_names_2 + ['w_TOP_plus_1', 'pos_TOP_plus_1', 'pos_1_STACK_h', 'lex_1_STACK_rs']
+
 #POS STACK 1 h, LEX STACK 1 rs (good performance in http://www.aclweb.org/anthology/C/C10/C10-1093.pdf )
 #word['head'] where sentence['id'] == id[TOP_form]+1
 #POS STACK 1 h = the part-of-speech of the head of the second value on the stack
