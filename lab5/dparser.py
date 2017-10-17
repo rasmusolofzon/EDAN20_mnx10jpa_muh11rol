@@ -14,7 +14,6 @@ from sklearn import metrics
 from sklearn import tree
 
 
-
 def reference(stack, queue, graph):
     """
     Gold standard parsing
@@ -72,33 +71,17 @@ def encode_classes(y_symbols):
     return y, dict_classes, inv_dict_classes
 
 
+def extract_features(sentences, feature_names):
 
-if __name__ == '__main__':
-    train_file = 'datasets/swedish_talbanken05_train.conll'
-    test_file = 'datasets/swedish_talbanken05_test_blind.conll'
-    column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
-    column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
+    #sent_cnt = 0
+    #nonprojectives = []
 
-    feature_names_1 = ['stack0_FORM', 'stack0_POS', 'queue0_FORM', 'queue0_POS', 'can_leftarc', 'can_reduce']
-    feature_names_2 = feature_names_1 + ['stack1_FORM', 'stack1_POS', 'queue1_FORM', 'queue1_POS']
-    feature_names_3 = feature_names_2 + ['sent_stack0fw_FORM', 'sent_stack0fw_POS', 'sent_stack1h_POS', 'sent_stack1rs_FORM']
-
-    sentences = conll.read_sentences(train_file)
-    formatted_corpus = conll.split_rows(sentences, column_names_2006)
-
-    sent_cnt = 0
-
-    nonprojectives = []
-
-    X_dict_1 = []
-    X_dict_2 = []
-    X_dict_3 = []
-
+    X_dict = []
     Y_symbols = []
 
-    for sentence in formatted_corpus:
+    for sentence in sentences:
         #print(sentence)
-        sent_cnt += 1
+        #sent_cnt += 1
         #if sent_cnt % 1000 == 0:
         #    print(sent_cnt, 'sentences on', len(formatted_corpus), flush=True)
         stack = []
@@ -112,12 +95,8 @@ if __name__ == '__main__':
 
         while queue:
             # Extract the features
-            feature_vector = features.extract(stack, queue, graph, feature_names_1, sentence)
-            X_dict_1.append(feature_vector)
-            feature_vector = features.extract(stack, queue, graph, feature_names_2, sentence)
-            X_dict_2.append(feature_vector)
-            feature_vector = features.extract(stack, queue, graph, feature_names_3, sentence)
-            X_dict_3.append(feature_vector)
+            feature_vector = features.extract(stack, queue, graph, feature_names, sentence)
+            X_dict.append(feature_vector)
 
             # Obtain the next transition
             stack, queue, graph, trans = reference(stack, queue, graph)
@@ -142,7 +121,8 @@ if __name__ == '__main__':
             word['head'] = graph['heads'][word['id']]
         #print(transitions)
         #print(graph)
-            
+
+
     # Obtain the shortest non-projective sentence
     '''shortest = min(nonprojectives, key=len)
     nonprojective = ''
@@ -154,15 +134,83 @@ if __name__ == '__main__':
     #print(sentences[3])
     #for line in formatted_corpus[3]: print(line)
     
-    
-    #print(X)
-    #print(Y)
-    print('Nbr of feature vectors in X3: ' + str(len(X_dict_3)))
-    print('Nbr of gold standard values in Y: ' + str(len(Y_symbols)))
+    return X_dict, Y_symbols
 
-    classes = ['la', 'ra', 'sh', 're']
+
+def create_ml_models(sentences, feature_names):
+    # Extract the features from the sentences
+    X_dict, Y_symbols = extract_features(formatted_train_sentences, feature_names)
+    
+    # Vectorize the features
     vec = DictVectorizer(sparse=True)
-    X_1 = vec.fit_transform(X_dict_1)
-    X_2 = vec.fit_transform(X_dict_2)
-    X_3 = vec.fit_transform(X_dict_3)
+    X = vec.fit_transform(X_dict)
     Y, dict_classes, inv_dict_classes = encode_classes(Y_symbols)
+
+    #print('Nbr of feature vectors in X: ' + str(len(X_dict)))
+    #print('Nbr of gold standard values in Y: ' + str(len(Y_symbols)))
+
+    # Start the training phase
+    training_start_time = time.clock()
+    print("Training the model...")   
+    classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+    model = classifier.fit(X, Y)
+
+    return model # we might need these later on: dict_classes, inv_dict_classes
+
+
+"""
+def parse_ml(stack, queue, graph, trans):
+    if stack and trans[:2] == 'ra':
+        stack, queue, graph = transition.right_arc(stack, queue, graph, trans[3:])
+        return stack, queue, graph, 'ra'
+    ...
+"""
+
+if __name__ == '__main__':
+    train_file = 'datasets/swedish_talbanken05_train.conll'
+    test_file = 'datasets/swedish_talbanken05_test_blind.conll'
+    column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
+    #column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
+    
+    train_sentences = conll.read_sentences(train_file)
+    formatted_train_sentences = conll.split_rows(train_sentences, column_names_2006)
+    test_sentences = conll.read_sentences(test_file)
+    formatted_test_sentences = conll.split_rows(test_sentences, column_names_2006)
+
+    feature_names_1 = ['stack0_FORM', 'stack0_POS', 'queue0_FORM', 'queue0_POS', 'can_leftarc', 'can_reduce']
+    feature_names_2 = feature_names_1 + ['stack1_FORM', 'stack1_POS', 'queue1_FORM', 'queue1_POS']
+    feature_names_3 = feature_names_2 + ['sent_stack0fw_FORM', 'sent_stack0fw_POS', 'sent_stack1h_POS', 'sent_stack1rs_FORM']
+
+    model_1= create_ml_models(formatted_train_sentences, feature_names_1)
+    model_2 = create_ml_models(formatted_train_sentences, feature_names_2)
+    model_3 = create_ml_models(formatted_train_sentences, feature_names_3)
+  
+    print("Now it is time to start the parsing with machine learning!")
+
+
+    """
+    # Start the parsing with machine learning
+
+    for sentence in formatted_corpus:
+
+        stack = []
+        queue = list(sentence)
+        graph = {}
+        graph['heads'] = {}
+        graph['heads']['0'] = '0'
+        graph['deprels'] = {}
+        graph['deprels']['0'] = 'ROOT'
+        transitions = []
+
+        while queue:
+            # Extract the features
+            feature_vector = features.extract(stack, queue, graph, feature_names, sentence)
+            X_dict.append(feature_vector)
+
+            trans_nr = classifier.predict()
+            stack, queue, graph, trans = parse_ml(stack, queue, graph, trans)
+
+
+        stack, graph = transition.empty_stack(stack, graph)
+    """
+
