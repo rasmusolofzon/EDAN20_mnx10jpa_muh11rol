@@ -13,6 +13,10 @@ from sklearn import linear_model
 from sklearn import metrics
 from sklearn import tree
 
+#from sklearn.naive_bayes import GaussianNB
+#from sklearn.grid_search import GridSearchCV
+
+
 
 def reference(stack, queue, graph):
     """
@@ -138,7 +142,8 @@ def extract_features(sentences, feature_names):
 
 
 def create_ml_models(sentences, feature_names):
-    # Extract the features from the sentences
+    # Extract the features from the train sentences
+    print('Extracting the features from the train set...')
     X_dict, Y_symbols = extract_features(formatted_train_sentences, feature_names)
     
     # Vectorize the features
@@ -146,16 +151,19 @@ def create_ml_models(sentences, feature_names):
     X = vec.fit_transform(X_dict)
     Y, dict_classes, inv_dict_classes = encode_classes(Y_symbols)
 
+    print('Feature vectors created!\n')
+
     #print('Nbr of feature vectors in X: ' + str(len(X_dict)))
     #print('Nbr of gold standard values in Y: ' + str(len(Y_symbols)))
 
     # Start the training phase
     training_start_time = time.clock()
-    print("Training the model...")   
+    print("Training the model...")
     classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
     model = classifier.fit(X, Y)
+    print("Training done!\n")
 
-    return model # we might need these later on: dict_classes, inv_dict_classes
+    return vec, model # we might need these later on: dict_classes, inv_dict_classes
 
 
 """
@@ -181,17 +189,16 @@ if __name__ == '__main__':
     feature_names_2 = feature_names_1 + ['stack1_FORM', 'stack1_POS', 'queue1_FORM', 'queue1_POS']
     feature_names_3 = feature_names_2 + ['sent_stack0fw_FORM', 'sent_stack0fw_POS', 'sent_stack1h_POS', 'sent_stack1rs_FORM']
 
-    model_1= create_ml_models(formatted_train_sentences, feature_names_1)
-    model_2 = create_ml_models(formatted_train_sentences, feature_names_2)
-    model_3 = create_ml_models(formatted_train_sentences, feature_names_3)
+    vec_1, model_1 = create_ml_models(formatted_train_sentences, feature_names_1)
+    #model_2 = create_ml_models(formatted_train_sentences, feature_names_2)
+    #model_3 = create_ml_models(formatted_train_sentences, feature_names_3)
   
-    print("Now it is time to start the parsing with machine learning!")
+    print("Now it is time to start the parsing with machine learning!\n")
 
-
-    """
+ 
     # Start the parsing with machine learning
 
-    for sentence in formatted_corpus:
+    for sentence in formatted_test_sentences:
 
         stack = []
         queue = list(sentence)
@@ -203,14 +210,26 @@ if __name__ == '__main__':
         transitions = []
 
         while queue:
-            # Extract the features
-            feature_vector = features.extract(stack, queue, graph, feature_names, sentence)
-            X_dict.append(feature_vector)
+            # Extract the feature vector
+            feature_vector = features.extract(stack, queue, graph, feature_names_1, sentence)
+            # Vectorize the test set and one-hot encoding
+            
+            X = vec_1.transform(feature_vector)
+            Y = model_1.predict(X)
+            
+            if Y[0] != 3:
+                print(Y[0])
 
-            trans_nr = classifier.predict()
-            stack, queue, graph, trans = parse_ml(stack, queue, graph, trans)
+            #classes = ['la', 'ra', 'sh', 're']
+            #classes 
+
+            #trans_nr = classifier.predict()
+            #stack, queue, graph, trans = parse_ml(stack, queue, graph, trans)
+
 
 
         stack, graph = transition.empty_stack(stack, graph)
-    """
+        # Poorman's projectivization to have well-formed graphs.
+        for word in sentence:
+            word['head'] = graph['heads'][word['id']]
 
