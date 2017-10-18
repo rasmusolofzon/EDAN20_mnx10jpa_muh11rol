@@ -217,7 +217,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
             if i == 0:
                 # old-school prediction, w/o help of previous chunks
                 # Vectorize the test sentence and one hot encoding
-                X_iter_one = vec.transform(dict(zip(feature_names[:len(feature_names)-2], x)))
+                X_iter_one = vec.transform(dict(zip(feature_names[:-2], x)))
                 # Predicts the chunks and returns numbers
                 y_iter_one_predicted = classifier.predict(X_iter_one)
 
