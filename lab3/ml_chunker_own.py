@@ -220,6 +220,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
                 X_iter_one = vec.transform(dict(zip(feature_names[:-2], x)))
                 # Predicts the chunks and returns numbers
                 y_iter_one_predicted = classifier.predict(X_iter_one)
+                # print(y_iter_one_predicted)
 
                 # TODO
                 # Converts to chunk names
@@ -229,6 +230,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
                 for j in range(len(padded_sentence[i+2])):
                     row += padded_sentence[i+2][j] + ' '
                 row += y_iter_one_predicted_symbols[i]
+                
                 # f_out.write(row + '\n')
                 rows.append(row + '\n')
                 # add to some kind of dict (mayhaps)
@@ -242,7 +244,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
                 x.append(padded_sentence[i+2-1][3])
                 # print(x)
                 # Vectorize the test sentence and one hot encoding
-                cut_feat_names = feature_names[:len(feature_names)-2]
+                cut_feat_names = feature_names[:-2]
                 cut_feat_names.append(feature_names[-1])
                 # print(cut_feat_names)
                 X_iter_two = vec.transform(dict(zip(cut_feat_names, x)))
@@ -267,19 +269,22 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
                 
 
                 padded_sentence[i+2].append(y_iter_two_predicted_symbols[0])
+                
                 # x.append(y_iter_one_predicted_symbols[i]) 
             else:
             
                 # predict new-school
-                x.append(padded_sentence[i-2][3])
-                x.append(padded_sentence[i-1][3])
+                x.append(padded_sentence[i+2-2][3])
+                x.append(padded_sentence[i+2-1][3])
                 # Vectorize the test sentence and one hot encoding
                 X_iter_n = vec.transform(dict(zip(feature_names, x)))
                 # Predicts the chunks and returns numbers
                 y_iter_n_predicted = classifier.predict(X_iter_n)
+                # print(y_iter_n_predicted)
 
                 # Converts to chunk names
                 y_iter_n_predicted_symbols = [dict_classes[j] for j in y_iter_n_predicted]
+                # print(y_iter_n_predicted_symbols)
 
                 row = ""
                 for j in range(len(padded_sentence[i+2])):
@@ -290,13 +295,15 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
                 # add to some kind of dict (mayhaps)
                 
                 padded_sentence[i+2].append(y_iter_n_predicted_symbols[0])
+                # print(row)
+                # print(padded_sentence)
         rows.append('\n')
         nbr_sent_clcltd += 1.0
-        if (nbr_sent_clcltd % 25) == 0:
+        if (nbr_sent_clcltd % 50) == 0:
             print(nbr_sent_clcltd / total)
     for row in rows:
         f_out.write(row)
-        print(row)
+        # print(row)
 
 if __name__ == '__main__':
     start_time = time.clock()
@@ -358,21 +365,21 @@ if __name__ == '__main__':
     print("Done!")
 
     '''
-    X_test_dict, y_test_symbols = extract_features(test_sentences, w_size, feature_names, training_phase = False)
-    # Vectorize the test set and one-hot encoding
-    X_test = vec.transform(X_test_dict)  # Possible to add: .toarray()
-    y_test = [inv_dict_classes[i] if i in y_symbols else 0 for i in y_test_symbols]
-    y_test_predicted = classifier.predict(X_test)
-    print("Classification report for classifier %s:\n%s\n"
-          % (classifier, metrics.classification_report(y_test, y_test_predicted)))
+        X_test_dict, y_test_symbols = extract_features(test_sentences, w_size, feature_names, training_phase = False)
+        # Vectorize the test set and one-hot encoding
+        X_test = vec.transform(X_test_dict)  # Possible to add: .toarray()
+        y_test = [inv_dict_classes[i] if i in y_symbols else 0 for i in y_test_symbols]
+        y_test_predicted = classifier.predict(X_test)
+        print("Classification report for classifier %s:\n%s\n"
+            % (classifier, metrics.classification_report(y_test, y_test_predicted)))
 
-    # Here we tag the test set and we save it.
-    # This prediction is redundant with the piece of code above,
-    # but we need to predict one sentence at a time to have the same
-    # corpus structure
-    # print("Predicting the test set...")
-    # f_out = open('out', 'w')
-    # predict(test_sentences, feature_names, f_out, classifier)
+        # Here we tag the test set and we save it.
+        # This prediction is redundant with the piece of code above,
+        # but we need to predict one sentence at a time to have the same
+        # corpus structure
+        # print("Predicting the test set...")
+        # f_out = open('out', 'w')
+        # predict(test_sentences, feature_names, f_out, classifier)
     '''
 
     end_time = time.clock()
