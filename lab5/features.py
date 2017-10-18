@@ -59,23 +59,52 @@ def extract(stack, queue, graph, feature_names, sentence):
         """
 
     # Only for the third feature set
-    if len(feature_names) >= 14:
+    if len(feature_names) >= 16:
         
         # the word form and the part-of-speech of the word following the top of the stack in the sentence order
         if len(stack) >= 1:
             for i in range(len(sentence)):
                 if sentence[i]['form'] == stack[0]['form']:
+                    
+
+
                     if len(sentence) >= i+2:
                         features['sent_stack0fw_FORM'] = sentence[i+1]['form']
                         features['sent_stack0fw_POS'] = sentence[i+1]['postag']
-                    else: 
+                    else:
+                        #varför sker detta aldrig???
                         features['sent_stack0fw_FORM'] = 'nil'
                         features['sent_stack0fw_POS'] = 'nil'
+                    
+                    if len(sentence) >= i+3:
+                        features['sent_stack0ffw_FORM'] = sentence[i+2]['form']
+                        features['sent_stack0ffw_POS'] = sentence[i+2]['postag']
+                    else:
+                        # Detta sker!!
+                        features['sent_stack0ffw_FORM'] = 'nil'
+                        features['sent_stack0ffw_POS'] = 'nil'
+                    
+                    if i != 0:
+                        features['sent_stack0pw_FORM'] = sentence[i-1]['form']
+                        features['sent_stack0pw_POS'] = sentence[i-1]['postag']
+                    else:
+                        #varför sker detta samtidigt som det funkar utan if-satsen ovan?
+                        features['sent_stack0pw_FORM'] = 'nil'
+                        features['sent_stack0pw_POS'] = 'nil'
                     break
         else:
             features['sent_stack0fw_FORM'] = 'nil'
             features['sent_stack0fw_POS'] = 'nil'
+            features['sent_stack0ffw_FORM'] = 'nil'
+            features['sent_stack0ffw_POS'] = 'nil'
+            features['sent_stack0pw_FORM'] = 'nil'
+            features['sent_stack0pw_POS'] = 'nil'
         
+
+
+
+        """
+
         # the part-of-speech of the head of the second value on the stack
         if len(stack) >= 2:
             for i in range(len(sentence)):
@@ -96,10 +125,11 @@ def extract(stack, queue, graph, feature_names, sentence):
         else: 
             features['sent_stack1rs_FORM'] = 'nil'
         
+        """
 
         #print(features)
-        #if len(features) < 14:
-            #print(features)
+        if len(features) < 16:
+            print(features)
 
     return features
 

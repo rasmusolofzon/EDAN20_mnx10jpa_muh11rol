@@ -7,16 +7,13 @@ import transition
 import conll
 import features
 
-import time
+from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_extraction import DictVectorizer
 from sklearn import linear_model
 from sklearn import metrics
 from sklearn import tree
 
-#from sklearn.naive_bayes import GaussianNB
-#from sklearn.grid_search import GridSearchCV
-
-
+import pickle
 
 def reference(stack, queue, graph):
     """
@@ -34,18 +31,18 @@ def reference(stack, queue, graph):
         # print('ra', queue[0]['deprel'], stack[0]['cpostag'], queue[0]['cpostag'])
         deprel = '.' + queue[0]['deprel']
         stack, queue, graph = transition.right_arc(stack, queue, graph)
-        return stack, queue, graph, 'ra' #+ deprel
+        return stack, queue, graph, 'ra' + deprel
     # Left arc
     if stack and queue[0]['id'] == stack[0]['head']:
         # print('la', stack[0]['deprel'], stack[0]['cpostag'], queue[0]['cpostag'])
         deprel = '.' + stack[0]['deprel']
         stack, queue, graph = transition.left_arc(stack, queue, graph)
-        return stack, queue, graph, 'la' #+ deprel
+        return stack, queue, graph, 'la' + deprel
     # Reduce
     if stack and transition.can_reduce(stack, graph):
+        # only do arc checks for words in stacks
         for word in stack:
-            if (word['id'] == queue[0]['head'] or
-                        word['head'] == queue[0]['id']):
+            if (word['id'] == queue[0]['head'] or word['head'] == queue[0]['id']):
                 # print('re', stack[0]['cpostag'], queue[0]['cpostag'])
                 stack, queue, graph = transition.reduce(stack, queue, graph)
                 return stack, queue, graph, 're'
@@ -53,6 +50,29 @@ def reference(stack, queue, graph):
     # print('sh', [], queue[0]['cpostag'])
     stack, queue, graph = transition.shift(stack, queue, graph)
     return stack, queue, graph, 'sh'
+
+
+def parse_ml(stack, queue, graph, trans):
+    
+    # Right arc
+    if stack and trans[:2] == 'ra':
+        stack, queue, graph = transition.right_arc(stack, queue, graph, trans[3:])
+        return stack, queue, graph, 'ra'    
+
+    # Left arc
+    if stack and trans[:2] == 'la':
+        stack, queue, graph = transition.left_arc(stack, queue, graph, trans[3:])
+        return stack, queue, graph, 'la'
+
+    # Reduce
+    if stack and trans[:2] == 're' and transition.can_reduce(stack, graph):
+        stack, queue, graph = transition.reduce(stack, queue, graph)
+        return stack, queue, graph, 're'
+
+    # Shift
+    stack, queue, graph = transition.shift(stack, queue, graph)
+    return stack, queue, graph, 'sh'
+
 
 
 def encode_classes(y_symbols):
@@ -100,6 +120,7 @@ def extract_features(sentences, feature_names):
         while queue:
             # Extract the features
             feature_vector = features.extract(stack, queue, graph, feature_names, sentence)
+            #print(feature_vector)
             X_dict.append(feature_vector)
 
             # Obtain the next transition
@@ -145,60 +166,37 @@ def create_ml_models(sentences, feature_names):
     # Extract the features from the train sentences
     print('Extracting the features from the train set...')
     X_dict, Y_symbols = extract_features(formatted_train_sentences, feature_names)
-    
-    # Vectorize the features
+        
+    # Learn the list of 'feature name -> value' mappings in the dict, then transform the dict to a vector
     vec = DictVectorizer(sparse=True)
     X = vec.fit_transform(X_dict)
-    Y, dict_classes, inv_dict_classes = encode_classes(Y_symbols)
+   # Translate the gold standard values to numbers
+    le = LabelEncoder()
+    le.fit(Y_symbols)
+    classes = list(le.classes_)
+    Y = le.transform(Y_symbols)
 
+    #print(len(classes))
     print('Feature vectors created!\n')
 
     #print('Nbr of feature vectors in X: ' + str(len(X_dict)))
     #print('Nbr of gold standard values in Y: ' + str(len(Y_symbols)))
 
     # Start the training phase
-    training_start_time = time.clock()
     print("Training the model...")
+    # Fit the model according to the given training data
     classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
     model = classifier.fit(X, Y)
     print("Training done!\n")
 
-    return vec, model # we might need these later on: dict_classes, inv_dict_classes
+    return vec, le, classifier # we might need these later on: dict_classes, inv_dict_classes
 
 
-"""
-def parse_ml(stack, queue, graph, trans):
-    if stack and trans[:2] == 'ra':
-        stack, queue, graph = transition.right_arc(stack, queue, graph, trans[3:])
-        return stack, queue, graph, 'ra'
-    ...
-"""
+def predict(sentences, feature_names, dict_vectorizer, label_encoder, classifier):
+    open('system_output.txt', 'w').write(str(''))
 
-if __name__ == '__main__':
-    train_file = 'datasets/swedish_talbanken05_train.conll'
-    test_file = 'datasets/swedish_talbanken05_test_blind.conll'
-    column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
-    #column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
-    
-    train_sentences = conll.read_sentences(train_file)
-    formatted_train_sentences = conll.split_rows(train_sentences, column_names_2006)
-    test_sentences = conll.read_sentences(test_file)
-    formatted_test_sentences = conll.split_rows(test_sentences, column_names_2006)
-
-    feature_names_1 = ['stack0_FORM', 'stack0_POS', 'queue0_FORM', 'queue0_POS', 'can_leftarc', 'can_reduce']
-    feature_names_2 = feature_names_1 + ['stack1_FORM', 'stack1_POS', 'queue1_FORM', 'queue1_POS']
-    feature_names_3 = feature_names_2 + ['sent_stack0fw_FORM', 'sent_stack0fw_POS', 'sent_stack1h_POS', 'sent_stack1rs_FORM']
-
-    vec_1, model_1 = create_ml_models(formatted_train_sentences, feature_names_1)
-    #model_2 = create_ml_models(formatted_train_sentences, feature_names_2)
-    #model_3 = create_ml_models(formatted_train_sentences, feature_names_3)
-  
-    print("Now it is time to start the parsing with machine learning!\n")
-
- 
-    # Start the parsing with machine learning
-
-    for sentence in formatted_test_sentences:
+    # graphs = []
+    for sentence in sentences:
 
         stack = []
         queue = list(sentence)
@@ -211,25 +209,91 @@ if __name__ == '__main__':
 
         while queue:
             # Extract the feature vector
-            feature_vector = features.extract(stack, queue, graph, feature_names_1, sentence)
-            # Vectorize the test set and one-hot encoding
+            feature_vector = features.extract(stack, queue, graph, feature_names, sentence)
             
-            X = vec_1.transform(feature_vector)
-            Y = model_1.predict(X)
+            # Vectorize the feature_vector
+            #print(feature_vector)
+            X = dict_vectorizer.transform(feature_vector)
+
+            # predict the transition
+            Y = classifier.predict(X)
+            trans = label_encoder.inverse_transform(Y)[0]
+            #print(trans)
             
-            if Y[0] != 3:
-                print(Y[0])
-
-            #classes = ['la', 'ra', 'sh', 're']
-            #classes 
-
-            #trans_nr = classifier.predict()
-            #stack, queue, graph, trans = parse_ml(stack, queue, graph, trans)
-
+            # in training phase: "stack, queue, graph, trans = reference(stack, queue, graph)""
+            stack, queue, graph, trans = parse_ml(stack, queue, graph, trans)
 
 
         stack, graph = transition.empty_stack(stack, graph)
+
+        # graphs.append(graph)
+
         # Poorman's projectivization to have well-formed graphs.
         for word in sentence:
             word['head'] = graph['heads'][word['id']]
+            word['deprel'] = graph['deprels'][word['id']]
 
+        write_sentence_to_file(sentence[1:])
+    return # graphs
+
+
+
+def write_sentence_to_file(sentence):
+    with open('system_output.txt', 'a') as system_output_file:
+        for word in sentence:
+            #if word['id'] != 0:
+            line = word['id'] + '\t' + word['form'] + '\t' + word['lemma'] + '\t' + word['cpostag'] + '\t' + word['postag'] + '\t' \
+               + word['feats'] + '\t' + word['head'] + '\t' + word['deprel'] + '\t' + '_' + '\t' + '_' + '\n'
+            system_output_file.write(line)
+        system_output_file.write('\n')
+    return
+
+
+if __name__ == '__main__':
+    train_file = 'datasets/swedish_talbanken05_train.conll'
+    test_file = 'datasets/swedish_talbanken05_test_blind.conll'
+
+    column_names_2006 = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats', 'head', 'deprel', 'phead', 'pdeprel']
+    column_names_2006_test = ['id', 'form', 'lemma', 'cpostag', 'postag', 'feats']
+    
+    train_sentences = conll.read_sentences(train_file)
+    formatted_train_sentences = conll.split_rows(train_sentences, column_names_2006)
+    
+    test_sentences = conll.read_sentences(test_file)
+    formatted_test_sentences = conll.split_rows(test_sentences, column_names_2006_test)
+
+    feature_names_1 = ['stack0_FORM', 'stack0_POS', 'queue0_FORM', 'queue0_POS', 'can_leftarc', 'can_reduce']
+    feature_names_2 = feature_names_1 + ['stack1_FORM', 'stack1_POS', 'queue1_FORM', 'queue1_POS']
+    feature_names_3 = feature_names_2 + ['sent_stack0fw_FORM', 'sent_stack0fw_POS', 'sent_stack1h_POS', 'sent_stack1rs_FORM']
+    feature_names = feature_names_3 # change n in feature_name_[n] to select feature vector
+
+    try:
+        classifier = pickle.load( open("classifier.p", "rb"))
+        le = pickle.load( open("le.p", "rb"))
+        vec = pickle.load( open("vec.p", "rb"))
+    except:
+        vec, le, classifier = create_ml_models(formatted_train_sentences, feature_names)  
+
+        pickle.dump(classifier, open("classifier.p", "wb"))
+        pickle.dump(le, open("le.p", "wb"))
+        pickle.dump(vec, open("vec.p", "wb"))
+  
+    print("Now it is time to start the parsing with machine learning!\n")
+
+    '''
+        try:
+            result_graphs = pickle.load(open("result_graphs.p", "rb"))
+        except:
+            # Start the parsing with machine learning
+            result_graphs = predict(formatted_test_sentences, feature_names, vec, le, classifier)
+
+            pickle.dump(result_graphs, open("result_graphs.p", "wb"))
+
+        print(type(result_graphs))
+    '''
+
+    predict(formatted_test_sentences, feature_names, vec, le, classifier)
+    
+
+
+    
