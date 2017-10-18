@@ -6,12 +6,13 @@ __author__ = "Pierre Nugues + edits by Joel & Rasmus"
 import time
 import conll_reader
 from sklearn.feature_extraction import DictVectorizer
-from sklearn import svm
+# from sklearn import svm
 from sklearn import linear_model
 from sklearn import metrics
 from sklearn import tree
-from sklearn.naive_bayes import GaussianNB
-from sklearn.grid_search import GridSearchCV
+# from sklearn.naive_bayes import GaussianNB
+# from sklearn.grid_search import GridSearchCV
+import pickle
 
 def extract_features(sentences, w_size, feature_names, training_phase):
     """
@@ -73,32 +74,32 @@ def extract_features_sent(sentence, w_size, feature_names, training_phase):
         
         # The chunks (Up to the word)
         # for j in range(w_size):
-        #     x.append(padded_sentence[i + j][3])
+        #     x.append(padded_sentence[i + j][2])
         if training_phase:
             # The preceding 'predicted' chunks
             for j in range(w_size):
                 x.append(padded_sentence[i + j][2])
                 # x.append(padded_sentence[i + j + 1][2])
-        elif not training_phase:
+        # elif not training_phase:
             # print("nopsled, wie")
             '''
                 here, need to predict and add continously. 
             
-            # skissande
-            if padded_sentence[i - 1][0].lower() == 'bos' and padded_sentence[i - 2][0].lower() == 'bos':
-                # predict chunk oldschool way
-            elif padded_sentence[i - 1][0].lower() != 'bos' padded_sentence[i - 2][0].lower() == 'bos':
-                # predict chunk half-old, half-new: use predicted chunk of w_(i-1) but disregard 'bos' of w_(i-2)
-            else:
-                # business as usual, predict with predicted chunks of w_(i-1) and w_(i-2)
+                # skissande
+                if padded_sentence[i - 1][0].lower() == 'bos' and padded_sentence[i - 2][0].lower() == 'bos':
+                    # predict chunk oldschool way
+                elif padded_sentence[i - 1][0].lower() != 'bos' padded_sentence[i - 2][0].lower() == 'bos':
+                    # predict chunk half-old, half-new: use predicted chunk of w_(i-1) but disregard 'bos' of w_(i-2)
+                else:
+                    # business as usual, predict with predicted chunks of w_(i-1) and w_(i-2)
 
-            # could also express this as:
-            if i == 0:
-                # 
-            elif i == 1:
-                # 
-            else:
-                # 
+                # could also express this as:
+                if i == 0:
+                    # 
+                elif i == 1:
+                    # 
+                else:
+                    # 
             
             
                 har dock fortf problemet att nuvarande set-up är att skilja på 'extract features' och 'predicting' väldigt hårt.
@@ -158,7 +159,7 @@ def encode_classes(y_symbols):
     y = [inv_dict_classes[element] for element in y_symbols]
     return y, dict_classes, inv_dict_classes
 
-
+'''
 def predict(test_sentences, feature_names, f_out, classifier):
     for test_sentence in test_sentences:
         X_test_dict, y_test_symbols = extract_features_sent(test_sentence, w_size, feature_names, training_phase = False)
@@ -175,6 +176,7 @@ def predict(test_sentences, feature_names, f_out, classifier):
             f_out.write(row + '\n')
         f_out.write('\n')
     f_out.close()
+'''
 
 def predict_extract_continously(sentences, feature_names, f_out, classifier): 
     nbr_sent_clcltd = 0.0  
@@ -188,8 +190,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
         end *= w_size
         sentence = start + sentence
         sentence += end
-# 0.5 done at 17:06:35
-# 1 at 17:10:40
+
         # Each sentence is a list of rows
         sentence = sentence.splitlines()
         padded_sentence = list()
@@ -212,6 +213,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
             # The POS
             for j in range(2 * w_size + 1):
                 x.append(padded_sentence[i + j][1])
+            
             if i == 0:
                 # old-school prediction, w/o help of previous chunks
                 # Vectorize the test sentence and one hot encoding
@@ -232,10 +234,8 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
                 # add to some kind of dict (mayhaps)
                 
                 padded_sentence[i+2].append(y_iter_one_predicted_symbols[i])
-                '''
-                    x.append('bos')
-                    x.append('bos')
-                '''
+                # x.append('bos')
+                # x.append('bos')
                 
             elif i == 1:
                 # half-old-school prediction, w/ help of one previously predicted chunk
@@ -269,6 +269,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
                 padded_sentence[i+2].append(y_iter_two_predicted_symbols[0])
                 # x.append(y_iter_one_predicted_symbols[i]) 
             else:
+            
                 # predict new-school
                 x.append(padded_sentence[i-2][3])
                 x.append(padded_sentence[i-1][3])
@@ -295,6 +296,7 @@ def predict_extract_continously(sentences, feature_names, f_out, classifier):
             print(nbr_sent_clcltd / total)
     for row in rows:
         f_out.write(row)
+        print(row)
 
 if __name__ == '__main__':
     start_time = time.clock()
@@ -304,38 +306,50 @@ if __name__ == '__main__':
     feature_names = ['word_n2', 'word_n1', 'word', 'word_p1', 'word_p2',
                      'pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2',
                      'chunk_n2', 'chunk_n1']
-
-    train_sentences = conll_reader.read_sentences(train_corpus)
-
-    print("Extracting the features...")
-    X_dict, y_symbols = extract_features(train_sentences, w_size, feature_names, training_phase = True)
-    # for i in range(40):
-    #     print(X_dict[i])
-    #print(train_sentences[0] + train_sentences[1])
-    
-    print("Encoding the features and classes...")
-    # Vectorize the feature matrix and carry out a one-hot encoding
-    vec = DictVectorizer(sparse=True)
-    # print(X_dict[55])
-    X = vec.fit_transform(X_dict)
-    # The statement below will swallow a considerable memory
-    # X = vec.fit_transform(X_dict).toarray()
-    # print(vec.get_feature_names())
-
-    y, dict_classes, inv_dict_classes = encode_classes(y_symbols)
-
     training_start_time = time.clock()
-    print("Training the model...")
-    classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
-    # classifier = tree.DecisionTreeClassifier()
-    # classifier = linear_model.Perceptron(penalty='l2', n_jobs=2)
-    model = classifier.fit(X, y)
-    # print(model)
+
+    try:
+        classifier = pickle.load( open("classifier.p", "rb"))
+        vec = pickle.load( open("vec.p", "rb"))
+        dict_classes = pickle.load( open("dict_classes.p", "rb"))
+        inv_dict_classes = pickle.load( open("inv_dict_classes.p", "rb"))
+    except:
+        train_sentences = conll_reader.read_sentences(train_corpus)
+
+        print("Extracting the features...")
+        X_dict, y_symbols = extract_features(train_sentences, w_size, feature_names, training_phase = True)
+        # for i in range(40):
+        #     print(X_dict[i])
+        #print(train_sentences[0] + train_sentences[1])
+        
+        print("Encoding the features and classes...")
+        # Vectorize the feature matrix and carry out a one-hot encoding
+        vec = DictVectorizer(sparse=True)
+        # print(X_dict[55])
+        X = vec.fit_transform(X_dict)
+        # The statement below will swallow a considerable memory
+        # X = vec.fit_transform(X_dict).toarray()
+        # print(vec.get_feature_names())
+        pickle.dump(vec, open("vec.p", "wb"))
+
+        y, dict_classes, inv_dict_classes = encode_classes(y_symbols)
+        pickle.dump(dict_classes, open("dict_classes.p", "wb"))
+        pickle.dump(inv_dict_classes, open("inv_dict_classes.p", "wb"))
+
+        training_start_time = time.clock()
+        print("Training the model...")
+        classifier = linear_model.LogisticRegression(penalty='l2', dual=True, solver='liblinear')
+        # classifier = tree.DecisionTreeClassifier()
+        # classifier = linear_model.Perceptron(penalty='l2', n_jobs=2)
+        model = classifier.fit(X, y)
+        print(model)
+
+        pickle.dump(classifier, open("classifier.p", "wb"))
 
     test_start_time = time.clock()
     # We apply the model to the test set
     test_sentences = list(conll_reader.read_sentences(test_corpus))
-
+    # print(test_sentences[0])
     # Here we carry out a chunk tag prediction and we report the per tag error
     # This is done for the whole corpus without regard for the sentence structure
     print("Predicting the chunks in the test set...")
