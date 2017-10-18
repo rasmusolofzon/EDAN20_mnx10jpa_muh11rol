@@ -236,6 +236,22 @@ Eval of final solution:
                 PRT: precision:  82.14%; recall:  43.40%; FB1:  56.79  56
                 SBAR: precision:  85.83%; recall:  78.13%; FB1:  81.80  487
         " performs like absolute shit. Probably smth wrong in algo. Will have to re-check this w/ fresh eyes
+        after correcting index issue ([i-2] to [i].........), yielded FB1 > 92:
+        "
+        $ perl conlleval.txt < out_own
+        processed 47377 tokens with 23852 phrases; found: 23884 phrases; correct: 22038.
+        accuracy:  95.02%; precision:  92.27%; recall:  92.39%; FB1:  92.33 <----!
+                ADJP: precision:  79.05%; recall:  64.61%; FB1:  71.11  358
+                ADVP: precision:  80.00%; recall:  78.98%; FB1:  79.49  855
+                CONJP: precision:  71.43%; recall:  55.56%; FB1:  62.50  7
+                INTJ: precision: 100.00%; recall:  50.00%; FB1:  66.67  1
+                LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                NP: precision:  92.24%; recall:  92.75%; FB1:  92.49  12492
+                PP: precision:  96.12%; recall:  97.76%; FB1:  96.93  4893
+                PRT: precision:  79.21%; recall:  75.47%; FB1:  77.29  101
+                SBAR: precision:  88.89%; recall:  83.74%; FB1:  86.24  504
+                VP: precision:  92.27%; recall:  92.57%; FB1:  92.42  4673
+        "
 
 frågor
 ------
