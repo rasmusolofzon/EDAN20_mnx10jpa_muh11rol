@@ -194,7 +194,7 @@ if __name__ == '__main__':
     # but we need to predict one sentence at a time to have the same
     # corpus structure
     print("Predicting the test set...")
-    f_out = open('out', 'w')
+    f_out = open('out_ml_unedited', 'w')
     predict(test_sentences, feature_names, f_out)
 
     end_time = time.clock()

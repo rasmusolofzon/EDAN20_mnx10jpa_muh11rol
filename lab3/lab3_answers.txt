@@ -8,6 +8,22 @@ svar:
         feature_names = ['pos_n2', 'pos_n1', 'pos', 'pos_p1', 'pos_p2']
 
         This yielded the results:
+        "
+        $ perl conlleval.txt < out_ml_unedited
+        processed 47377 tokens with 23852 phrases; found: 24251 phrases; correct: 22010.
+        accuracy:  94.96%; precision:  90.76%; recall:  92.28%; FB1:  91.51 <----!
+                ADJP: precision:  74.22%; recall:  65.07%; FB1:  69.34  384
+                ADVP: precision:  78.45%; recall:  79.45%; FB1:  78.94  877
+                CONJP: precision:  44.44%; recall:  44.44%; FB1:  44.44  9
+                INTJ: precision: 100.00%; recall:  50.00%; FB1:  66.67  1
+                LST: precision:   0.00%; recall:   0.00%; FB1:   0.00  0
+                NP: precision:  90.31%; recall:  92.34%; FB1:  91.31  12701
+                PP: precision:  95.87%; recall:  97.86%; FB1:  96.85  4911
+                PRT: precision:  77.23%; recall:  73.58%; FB1:  75.36  101
+                SBAR: precision:  89.15%; recall:  84.49%; FB1:  86.76  507
+                VP: precision:  90.84%; recall:  92.83%; FB1:  91.82  4760
+        "
+
 
         "
                 Classification report for classifier LogisticRegression(C=1.0, class_weight=None, dual=True, fit_intercept=True,
@@ -39,6 +55,8 @@ svar:
         "
 
 4. Logistic Regression
+
+
         "
         Decision trees: Global f1 score of 0.95
                 Classification report for classifier DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
@@ -70,6 +88,7 @@ svar:
 
         avg / total       0.95      0.95      0.95     47377
         "
+
         "
         $ perl conlleval.txt < out
         processed 47377 tokens with 23852 phrases; found: 24251 phrases; correct: 22010.
@@ -86,6 +105,8 @@ svar:
                 VP: precision:  90.84%; recall:  92.83%; FB1:  91.82  4760
         "
 Perceptrons
+
+
         "
         Perceptrons: Global f1 score of 0.90
                 Classification report for classifier Perceptron(alpha=0.0001, class_weight=None, eta0=1.0, fit_intercept=True,
@@ -134,6 +155,8 @@ Perceptrons
                 VP: precision:  81.57%; recall:  86.82%; FB1:  84.11  4958
         "
 Decision trees
+
+
         "
                 Classification report for classifier DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
                 max_features=None, max_leaf_nodes=None,
@@ -236,7 +259,9 @@ Eval of final solution:
                 PRT: precision:  82.14%; recall:  43.40%; FB1:  56.79  56
                 SBAR: precision:  85.83%; recall:  78.13%; FB1:  81.80  487
         " performs like absolute shit. Probably smth wrong in algo. Will have to re-check this w/ fresh eyes
-        after correcting index issue ([i-2] to [i].........), yielded FB1 > 92:
+ 
+ 
+ >      after correcting index issue ([i-2] to [i].........), yielded FB1 > 92:
         "
         $ perl conlleval.txt < out_own
         processed 47377 tokens with 23852 phrases; found: 23884 phrases; correct: 22038.
@@ -252,6 +277,17 @@ Eval of final solution:
                 SBAR: precision:  88.89%; recall:  83.74%; FB1:  86.24  504
                 VP: precision:  92.27%; recall:  92.57%; FB1:  92.42  4673
         "
+
+
+
+
+
+
+
+
+
+
+
 
 frågor
 ------

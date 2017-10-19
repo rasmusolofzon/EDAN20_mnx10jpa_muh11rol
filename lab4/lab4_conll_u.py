@@ -36,7 +36,7 @@ def get_sov_triples(formatted_corpus):
                                     sov_triplets[(word[1]['form'].lower(), other_word[1]['form'].lower(), head[1]['form'].lower())] = 1
     return sov_triplets
 
-def reformate_corpus(formatted_corpus):
+def reformat_corpus(formatted_corpus):
     reformatted_corpus = []
     for sentence in formatted_corpus:
         reformatted_sentence = {}
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     formatted_corpus = conll.split_rows(conll.read_sentences(train_file), column_names_u)
 
-    reformatted_corpus = reformate_corpus(formatted_corpus)
+    reformatted_corpus = reformat_corpus(formatted_corpus)
 
     '''
     for sentence in reformatted_corpus:
