@@ -6,9 +6,6 @@ The partial graph is represented as a dictionary
 
 __author__ = "Pierre Nugues"
 
-import conll
-import dparser
-
 
 def shift(stack, queue, graph):
     """
