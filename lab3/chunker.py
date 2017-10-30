@@ -155,7 +155,7 @@ if __name__ == '__main__':
     predicted = predict(model, test_corpus)
     accuracy = eval(predicted)
     print("Accuracy", accuracy)
-    f_out = open('out', 'w')
+    f_out = open('out_baseline', 'w')
     # We write the word (form), part of speech (pos),
     # gold-standard chunk (chunk), and predicted chunk (pchunk)
     for sentence in predicted:
